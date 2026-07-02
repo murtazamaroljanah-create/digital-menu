@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universal Sweets - Digital Menu Card & Admin Dashboard</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="admin-view-active">
+    
+    <!-- View Switcher (Floating developer helper, clean and aesthetic) -->
+    <div class="view-switcher" id="viewSwitcher">
+        <button id="switchToAdmin" class="active-view-btn"><i data-lucide="layout-dashboard"></i> Admin Dashboard</button>
+        <button id="switchToCustomer"><i data-lucide="smartphone"></i> Customer Menu</button>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 1. ADMIN DASHBOARD VIEW                    -->
+    <!-- ========================================== -->
+    <div id="admin-view" class="view-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-logo">
+                    <h2>Universal</h2>
+                    <span>— SWEETS —</span>
+                </div>
+            </div>
+            <nav class="sidebar-menu">
+                <ul>
+                    <li class="active" data-tab="dashboard">
+                        <a href="#"><i data-lucide="layout-dashboard"></i> Dashboard</a>
+                    </li>
+                    <li data-tab="menu-sections">
+                        <a href="#"><i data-lucide="folder-kanban"></i> Menu Sections</a>
+                    </li>
+                    <li data-tab="items">
+                        <a href="#"><i data-lucide="cookie"></i> Items</a>
+                    </li>
+                    <li data-tab="categories">
+                        <a href="#"><i data-lucide="tags"></i> Categories</a>
+                    </li>
+                    <li data-tab="banners">
+                        <a href="#"><i data-lucide="image"></i> Banners</a>
+                    </li>
+                    <li data-tab="info-blocks">
+                        <a href="#"><i data-lucide="info"></i> Info Blocks</a>
+                    </li>
+                    <li data-tab="settings">
+                        <a href="#"><i data-lucide="settings"></i> Settings</a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="sidebar-secondary-menu">
+                <ul>
+                    <li id="sidebar-preview-menu">
+                        <a href="#" class="preview-btn"><i data-lucide="eye"></i> Preview Menu</a>
+                    </li>
+                    <li id="sidebar-analytics">
+                        <a href="#"><i data-lucide="trending-up"></i> Analytics</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="sidebar-footer">
+                <a href="#" class="logout-link"><i data-lucide="log-out"></i> Logout</a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="main-header">
+                <div class="header-title">
+                    <h1>Dashboard</h1>
+                    <p>Manage your digital menu easily</p>
+                </div>
+                <div class="header-actions">
+                    <button class="icon-btn notification-btn" aria-label="Notifications">
+                        <i data-lucide="bell"></i>
+                        <span class="notification-badge"></span>
+                    </button>
+                    <div class="admin-profile">
+                        <div class="profile-avatar">US</div>
+                        <div class="profile-info">
+                            <span class="profile-name">Universal Sweets</span>
+                            <span class="profile-role">Admin</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Stats Bar -->
+            <section class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon-wrapper gold-bg">
+                        <i data-lucide="box"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-label">Total Items</span>
+                        <h3 class="stat-val" id="stat-total-items">48</h3>
+                        <span class="stat-change positive">+5 this month</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon-wrapper orange-bg">
+                        <i data-lucide="layers"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-label">Categories</span>
+                        <h3 class="stat-val" id="stat-total-categories">5</h3>
+                        <span class="stat-change info">Sweets, Snacks, Beverages...</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon-wrapper blue-bg">
+                        <i data-lucide="eye"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-label">Total Views</span>
+                        <h3 class="stat-val">1,248</h3>
+                        <span class="stat-change positive">+18.6% this month</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon-wrapper green-bg">
+                        <i data-lucide="calendar"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-label">Last Updated</span>
+                        <h3 class="stat-val" id="stat-last-updated">2h ago</h3>
+                        <span class="stat-change date">June 26, 2026</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Dashboard Content Layout -->
+            <div class="dashboard-layout">
+                <!-- Left Column: Menu Sections & Quick Preview -->
+                <div class="dashboard-col col-left">
+                    <!-- Menu Sections Card -->
+                    <div class="card sections-card">
+                        <div class="card-header">
+                            <div class="card-header-title">
+                                <i data-lucide="folder-kanban" class="gold-icon"></i>
+                                <h2>Menu Sections</h2>
+                            </div>
+                            <button class="btn btn-secondary btn-sm" id="btnAddSection">
+                                <i data-lucide="plus"></i> Add Section
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <ul class="sections-list" id="admin-sections-list">
+                                <!-- Loaded dynamically via app.js -->
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Quick Preview Card -->
+                    <div class="card quick-preview-card">
+                        <div class="card-header">
+                            <h2>Quick Preview</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="banner-preview">
+                                <div class="banner-preview-img">
+                                    <img src="assets/hero_sweets.png" alt="Sweets Hero Banner">
+                                    <div class="banner-preview-overlay">
+                                        <div class="mini-logo">
+                                            <h3>Universal</h3>
+                                            <span>— SWEETS —</span>
+                                        </div>
+                                        <p class="mini-tagline">Tradition. Taste. Trust.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary btn-block" id="btnPreviewMenuFull">
+                                Preview Full Menu
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Recent Items & Sharing Options -->
+                <div class="dashboard-col col-right">
+                    <!-- Recent Items Card -->
+                    <div class="card items-card">
+                        <div class="card-header">
+                            <div class="card-header-title">
+                                <i data-lucide="cookie" class="gold-icon"></i>
+                                <h2>Recent Items</h2>
+                            </div>
+                            <button class="btn btn-secondary btn-sm" id="btnAddItem">
+                                <i data-lucide="plus"></i> Add Item
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-container">
+                                <table class="items-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Item</th>
+                                            <th>Category</th>
+                                            <th>Price</th>
+                                            <th>Status</th>
+                                            <th class="text-right">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="admin-items-table-body">
+                                        <!-- Loaded dynamically via app.js -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Share Menu Card -->
+                    <div class="card share-card">
+                        <div class="card-header">
+                            <h2>Share Your Menu</h2>
+                        </div>
+                        <div class="card-body">
+                            <p class="share-desc">Share this link with your customers to take orders</p>
+                            <div class="share-link-wrapper">
+                                <input type="text" id="share-link-input" readonly value="http://localhost:62467/menu">
+                                <button class="btn btn-primary" id="btnCopyLink">
+                                    <span id="copy-btn-text">Copy</span>
+                                </button>
+                            </div>
+                            <div class="share-social-wrapper">
+                                <span>Share via</span>
+                                <div class="share-social-buttons">
+                                    <a href="#" class="social-btn whatsapp-btn" id="share-wa" title="Share on WhatsApp">
+                                        <i data-lucide="message-square"></i>
+                                        <span>WhatsApp</span>
+                                    </a>
+                                    <a href="#" class="social-btn facebook-btn" id="share-fb" title="Share on Facebook">
+                                        <i data-lucide="facebook"></i>
+                                        <span>Facebook</span>
+                                    </a>
+                                    <a href="#" class="social-btn instagram-btn" id="share-ig" title="Share on Instagram">
+                                        <i data-lucide="instagram"></i>
+                                        <span>Instagram</span>
+                                    </a>
+                                    <a href="#" class="social-btn other-btn" id="share-other" title="More Share Options">
+                                        <i data-lucide="share-2"></i>
+                                        <span>Other</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <footer class="admin-footer">
+                <p>&copy; 2026 Universal Sweets. All rights reserved. Built with love and tradition.</p>
+            </footer>
+        </main>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 2. CUSTOMER MENU VIEW (MOBILE MOCKUP)      -->
+    <!-- ========================================== -->
+    <div id="customer-view" class="view-container">
+        <div class="phone-frame-container">
+            <div class="phone-frame">
+                <!-- Phone Top Bar status simulation -->
+                <div class="phone-status-bar">
+                    <span class="phone-time">9:41</span>
+                    <div class="phone-status-icons">
+                        <i data-lucide="signal" class="phone-icon-sz"></i>
+                        <i data-lucide="wifi" class="phone-icon-sz"></i>
+                        <i data-lucide="battery" class="phone-icon-sz"></i>
+                    </div>
+                </div>
+
+                <!-- Customer App Container -->
+                <div class="customer-app-content">
+                    <!-- Customer View Splash Screen / Hero Header -->
+                    <header class="customer-hero">
+                        <div class="customer-hero-overlay"></div>
+                        <div class="customer-hero-img-container">
+                            <img src="assets/hero_sweets.png" alt="Traditional Sweets Header" id="cust-hero-image">
+                        </div>
+                        <div class="customer-hero-details">
+                            <div class="customer-logo-badge">
+                                <h1>Universal</h1>
+                                <span>— SWEETS —</span>
+                                <p class="est-tag">EST. 1990</p>
+                            </div>
+                            <h2 class="customer-tagline">Tradition. Taste. Trust.</h2>
+                            <p class="customer-sub-tagline">Delicious sweets and snacks made with the finest ingredients and lots of love.</p>
+                        </div>
+                        <!-- Features Icons inside customer view -->
+                        <div class="customer-badges-grid">
+                            <div class="badge-item">
+                                <div class="badge-icon"><i data-lucide="leaf"></i></div>
+                                <span>PURE<br>INGREDIENTS</span>
+                            </div>
+                            <div class="badge-item">
+                                <div class="badge-icon"><i data-lucide="shield-check"></i></div>
+                                <span>HYGIENICALLY<br>MADE</span>
+                            </div>
+                            <div class="badge-item">
+                                <div class="badge-icon"><i data-lucide="calendar"></i></div>
+                                <span>FRESH<br>EVERYDAY</span>
+                            </div>
+                            <div class="badge-item">
+                                <div class="badge-icon"><i data-lucide="heart"></i></div>
+                                <span>MADE WITH<br>LOVE</span>
+                            </div>
+                        </div>
+                        <button class="customer-cta-btn" id="btnExploreMenu">
+                            <i data-lucide="shopping-bag"></i> Order on WhatsApp
+                        </button>
+                    </header>
+
+                    <!-- Main Catalog Content -->
+                    <section class="customer-catalog" id="customer-catalog-section">
+                        <div class="customer-catalog-header">
+                            <h2>Our Menu</h2>
+                            <p>Explore our wide range of sweets & snacks</p>
+                        </div>
+
+                        <!-- Categories Navigation Bar (Pills, overflow scroll) -->
+                        <div class="customer-category-tabs" id="customer-category-tabs-container">
+                            <!-- Dynamically loaded pills -->
+                        </div>
+
+                        <!-- Live Search Bar -->
+                        <div class="customer-search-wrapper">
+                            <i data-lucide="search" class="search-icon"></i>
+                            <input type="text" id="customer-search-input" placeholder="Search sweets, snacks, drinks...">
+                            <button id="clear-search-btn" class="clear-search-btn hidden">
+                                <i data-lucide="x"></i>
+                            </button>
+                        </div>
+
+                        <!-- Items Grid List -->
+                        <div class="customer-items-list" id="customer-items-list-container">
+                            <!-- Dynamically loaded items -->
+                        </div>
+                    </section>
+
+                    <!-- Customer Footer -->
+                    <footer class="customer-footer">
+                        <div class="customer-footer-brand">
+                            <h3>Universal Sweets</h3>
+                            <span>Tradition. Taste. Trust.</span>
+                        </div>
+                        <div class="customer-footer-socials">
+                            <a href="https://instagram.com/universalsweets53" target="_blank" rel="noopener noreferrer" aria-label="Visit Universal Sweets on Instagram" class="customer-social-icon instagram-icon">
+                                <i data-lucide="instagram"></i>
+                            </a>
+                        </div>
+                        <p class="customer-footer-copy">&copy; 2026 Universal Sweets. All rights reserved.</p>
+                    </footer>
+                </div>
+
+                <!-- Floating Bottom Cart Bar for WhatsApp Orders -->
+                <div class="customer-floating-cart hidden" id="customer-floating-cart-bar">
+                    <div class="cart-summary">
+                        <span class="cart-qty-indicator" id="cart-item-count">0</span>
+                        <div class="cart-summary-text">
+                            <span class="cart-label">WhatsApp Order</span>
+                            <span class="cart-total-price" id="cart-total-price-val">₹0</span>
+                        </div>
+                    </div>
+                    <button class="cart-checkout-btn" id="btnCartCheckout">
+                        <span>Place Order</span> <i data-lucide="arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 3. MODALS (Popups)                         -->
+    <!-- ========================================== -->
+    
+    <!-- Add/Edit Section Modal -->
+    <div class="modal-overlay" id="modalSection">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 id="modalSectionTitle">Add Menu Section</h3>
+                <button class="modal-close" id="btnCloseSectionModal"><i data-lucide="x"></i></button>
+            </div>
+            <form id="formSection" class="modal-form">
+                <input type="hidden" id="section-id-input">
+                <div class="form-group">
+                    <label for="section-name">Section Name</label>
+                    <input type="text" id="section-name" required placeholder="e.g. Sweets, Snacks, Beverages">
+                </div>
+                <div class="form-group">
+                    <label for="section-icon">Section Icon</label>
+                    <select id="section-icon">
+                        <option value="cookie">Sweets / Cookie</option>
+                        <option value="sandwich">Snacks / Sandwich</option>
+                        <option value="cup-soda">Beverages / Drinks</option>
+                        <option value="gift">Gift / Packages</option>
+                        <option value="heart">Specials</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-text" id="btnCancelSectionModal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Section</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add/Edit Item Modal -->
+    <div class="modal-overlay" id="modalItem">
+        <div class="modal-box modal-box-lg">
+            <div class="modal-header">
+                <h3 id="modalItemTitle">Add Menu Item</h3>
+                <button class="modal-close" id="btnCloseItemModal"><i data-lucide="x"></i></button>
+            </div>
+            <form id="formItem" class="modal-form">
+                <input type="hidden" id="item-id-input">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="item-name">Item Name</label>
+                        <input type="text" id="item-name" required placeholder="e.g. Kaju Katli">
+                    </div>
+                    <div class="form-group">
+                        <label for="item-category">Category (Section)</label>
+                        <select id="item-category" required>
+                            <!-- Populated dynamically -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="item-price">Price</label>
+                        <input type="number" id="item-price" required min="1" placeholder="e.g. 720">
+                    </div>
+                    <div class="form-group">
+                        <label for="item-unit">Price Unit</label>
+                        <input type="text" id="item-unit" required placeholder="e.g. kg, plate, glass, piece">
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="item-desc">Description</label>
+                        <textarea id="item-desc" rows="3" required placeholder="Brief description of ingredients or taste..."></textarea>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="item-image">Item Image</label>
+                        <select id="item-image">
+                            <option value="assets/kaju_katli.png">Kaju Katli (Cashew Sweet)</option>
+                            <option value="assets/ladoo.png">Motichoor Ladoo (Orange Ladoo)</option>
+                            <option value="assets/rasgulla.png">Rasgulla (White Syrup Balls)</option>
+                            <option value="assets/gulab_jamun.png">Gulab Jamun (Brown Syrup Balls)</option>
+                            <option value="assets/mathri.png">Mathri (Savory Crackers)</option>
+                            <option value="assets/badam_milk.png">Badam Milk (Almond Drink)</option>
+                            <option value="assets/hero_sweets.png">Sweets Platter (Default)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-text" id="btnCancelItemModal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Item</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- WhatsApp Order Checkout Modal -->
+    <div class="modal-overlay" id="modalCheckout">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>Your WhatsApp Order</h3>
+                <button class="modal-close" id="btnCloseCheckoutModal"><i data-lucide="x"></i></button>
+            </div>
+            <div class="checkout-body">
+                <p class="checkout-intro">Review your sweets & snacks order list. Clicking send will open WhatsApp with your pre-filled order text.</p>
+                <div class="checkout-items-list" id="checkout-items-list-container">
+                    <!-- Populated dynamically via JS -->
+                </div>
+                <div class="checkout-total-row">
+                    <span>Total Amount</span>
+                    <span class="checkout-total-val" id="checkout-total-val">₹0</span>
+                </div>
+                <div class="checkout-fields">
+                    <div class="form-group">
+                        <label for="cust-name">Your Name</label>
+                        <input type="text" id="cust-name" placeholder="Enter your name (Optional)">
+                    </div>
+                    <div class="form-group">
+                        <label for="cust-address">Delivery/Pick-up Notes</label>
+                        <textarea id="cust-address" rows="2" placeholder="e.g. Home delivery to flat 302, or Pick up at 6 PM (Optional)"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-text" id="btnCancelCheckout">Cancel</button>
+                <button class="btn btn-whatsapp" id="btnSendWhatsAppOrder">
+                    <i data-lucide="message-square"></i> Send to WhatsApp
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script loading -->
+    <script src="app.js"></script>
+</body>
+</html>
