@@ -790,6 +790,13 @@ function bindEventListeners() {
         });
     }
 
+    const navWhatsAppBtn = document.getElementById("navWhatsAppBtn");
+    if (navWhatsAppBtn) {
+        navWhatsAppBtn.addEventListener("click", () => {
+            window.open("https://wa.me/919876543210", "_blank");
+        });
+    }
+
     // Customer Live Search
     const searchInput = document.getElementById("customer-search-input");
     const clearSearchBtn = document.getElementById("clear-search-btn");

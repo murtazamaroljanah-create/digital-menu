@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=2">
 </head>
 <body class="admin-view-active">
     
@@ -268,115 +268,135 @@
     <!-- 2. CUSTOMER MENU VIEW (MOBILE MOCKUP)      -->
     <!-- ========================================== -->
     <div id="customer-view" class="view-container">
-        <div class="phone-frame-container">
-            <div class="phone-frame">
-                <!-- Phone Top Bar status simulation -->
-                <div class="phone-status-bar">
-                    <span class="phone-time">9:41</span>
-                    <div class="phone-status-icons">
-                        <i data-lucide="signal" class="phone-icon-sz"></i>
-                        <i data-lucide="wifi" class="phone-icon-sz"></i>
-                        <i data-lucide="battery" class="phone-icon-sz"></i>
+        <!-- Customer App Container -->
+        <div class="customer-app-content">
+            <!-- Navigation Bar -->
+            <nav class="customer-nav">
+                <div class="nav-container">
+                    <div class="nav-logo">
+                        <h2>Universal</h2>
+                        <span>— SWEETS —</span>
                     </div>
-                </div>
-
-                <!-- Customer App Container -->
-                <div class="customer-app-content">
-                    <!-- Customer View Splash Screen / Hero Header -->
-                    <header class="customer-hero">
-                        <div class="customer-hero-overlay"></div>
-                        <div class="customer-hero-img-container">
-                            <img src="assets/hero_sweets.png" alt="Traditional Sweets Header" id="cust-hero-image">
-                        </div>
-                        <div class="customer-hero-details">
-                            <div class="customer-logo-badge">
-                                <h1>Universal</h1>
-                                <span>— SWEETS —</span>
-                                <p class="est-tag">EST. 1990</p>
-                            </div>
-                            <h2 class="customer-tagline">Tradition. Taste. Trust.</h2>
-                            <p class="customer-sub-tagline">Delicious sweets and snacks made with the finest ingredients and lots of love.</p>
-                        </div>
-                        <!-- Features Icons inside customer view -->
-                        <div class="customer-badges-grid">
-                            <div class="badge-item">
-                                <div class="badge-icon"><i data-lucide="leaf"></i></div>
-                                <span>PURE<br>INGREDIENTS</span>
-                            </div>
-                            <div class="badge-item">
-                                <div class="badge-icon"><i data-lucide="shield-check"></i></div>
-                                <span>HYGIENICALLY<br>MADE</span>
-                            </div>
-                            <div class="badge-item">
-                                <div class="badge-icon"><i data-lucide="calendar"></i></div>
-                                <span>FRESH<br>EVERYDAY</span>
-                            </div>
-                            <div class="badge-item">
-                                <div class="badge-icon"><i data-lucide="heart"></i></div>
-                                <span>MADE WITH<br>LOVE</span>
-                            </div>
-                        </div>
-                        <button class="customer-cta-btn" id="btnExploreMenu">
-                            <i data-lucide="shopping-bag"></i> Order on WhatsApp
-                        </button>
-                    </header>
-
-                    <!-- Main Catalog Content -->
-                    <section class="customer-catalog" id="customer-catalog-section">
-                        <div class="customer-catalog-header">
-                            <h2>Our Menu</h2>
-                            <p>Explore our wide range of sweets & snacks</p>
-                        </div>
-
-                        <!-- Categories Navigation Bar (Pills, overflow scroll) -->
-                        <div class="customer-category-tabs" id="customer-category-tabs-container">
-                            <!-- Dynamically loaded pills -->
-                        </div>
-
-                        <!-- Live Search Bar -->
-                        <div class="customer-search-wrapper">
-                            <i data-lucide="search" class="search-icon"></i>
-                            <input type="text" id="customer-search-input" placeholder="Search sweets, snacks, drinks...">
-                            <button id="clear-search-btn" class="clear-search-btn hidden">
-                                <i data-lucide="x"></i>
-                            </button>
-                        </div>
-
-                        <!-- Items Grid List -->
-                        <div class="customer-items-list" id="customer-items-list-container">
-                            <!-- Dynamically loaded items -->
-                        </div>
-                    </section>
-
-                    <!-- Customer Footer -->
-                    <footer class="customer-footer">
-                        <div class="customer-footer-brand">
-                            <h3>Universal Sweets</h3>
-                            <span>Tradition. Taste. Trust.</span>
-                        </div>
-                        <div class="customer-footer-socials">
-                            <a href="https://instagram.com/universalsweets53" target="_blank" rel="noopener noreferrer" aria-label="Visit Universal Sweets on Instagram" class="customer-social-icon instagram-icon">
-                                <i data-lucide="instagram"></i>
-                            </a>
-                        </div>
-                        <p class="customer-footer-copy">&copy; 2026 Universal Sweets. All rights reserved.</p>
-                    </footer>
-                </div>
-
-                <!-- Floating Bottom Cart Bar for WhatsApp Orders -->
-                <div class="customer-floating-cart hidden" id="customer-floating-cart-bar">
-                    <div class="cart-summary">
-                        <span class="cart-qty-indicator" id="cart-item-count">0</span>
-                        <div class="cart-summary-text">
-                            <span class="cart-label">WhatsApp Order</span>
-                            <span class="cart-total-price" id="cart-total-price-val">₹0</span>
-                        </div>
-                    </div>
-                    <button class="cart-checkout-btn" id="btnCartCheckout">
-                        <span>Place Order</span> <i data-lucide="arrow-right"></i>
+                    <ul class="nav-links">
+                        <li><a href="#customer-hero">Home</a></li>
+                        <li><a href="#customer-catalog-section">Menu</a></li>
+                        <li><a href="#cust-about">About</a></li>
+                        <li><a href="#cust-location">Location</a></li>
+                    </ul>
+                    <button class="nav-cta-btn" id="navWhatsAppBtn">
+                        <i data-lucide="message-square"></i> Contact WhatsApp
                     </button>
                 </div>
+            </nav>
+
+            <!-- Customer View Splash Screen / Hero Header -->
+            <header class="customer-hero" id="customer-hero">
+                <div class="customer-hero-overlay"></div>
+                <div class="customer-hero-img-container">
+                    <img src="assets/hero_sweets.png" alt="Traditional Sweets Header" id="cust-hero-image">
+                </div>
+                <div class="customer-hero-details">
+                    <div class="customer-logo-badge">
+                        <h1>Universal</h1>
+                        <span>— SWEETS —</span>
+                        <p class="est-tag">EST. 1990</p>
+                    </div>
+                    <h2 class="customer-tagline">Tradition. Taste. Trust.</h2>
+                    <p class="customer-sub-tagline">Delicious sweets and snacks made with the finest ingredients and lots of love.</p>
+                </div>
+                <!-- Features Icons inside customer view -->
+                <div class="customer-badges-grid">
+                    <div class="badge-item">
+                        <div class="badge-icon"><i data-lucide="leaf"></i></div>
+                        <span>PURE<br>INGREDIENTS</span>
+                    </div>
+                    <div class="badge-item">
+                        <div class="badge-icon"><i data-lucide="shield-check"></i></div>
+                        <span>HYGIENICALLY<br>MADE</span>
+                    </div>
+                    <div class="badge-item">
+                        <div class="badge-icon"><i data-lucide="calendar"></i></div>
+                        <span>FRESH<br>EVERYDAY</span>
+                    </div>
+                    <div class="badge-item">
+                        <div class="badge-icon"><i data-lucide="heart"></i></div>
+                        <span>MADE WITH<br>LOVE</span>
+                    </div>
+                </div>
+                <button class="customer-cta-btn" id="btnExploreMenu">
+                    <i data-lucide="shopping-bag"></i> Order on WhatsApp
+                </button>
+            </header>
+
+            <!-- Main Catalog Content -->
+            <section class="customer-catalog" id="customer-catalog-section">
+                <div class="customer-catalog-header">
+                    <h2>Our Menu</h2>
+                    <p>Explore our wide range of sweets & snacks</p>
+                </div>
+
+                <!-- Categories Navigation Bar (Pills, overflow scroll) -->
+                <div class="customer-category-tabs" id="customer-category-tabs-container">
+                    <!-- Dynamically loaded pills -->
+                </div>
+
+                <!-- Live Search Bar -->
+                <div class="customer-search-wrapper">
+                    <i data-lucide="search" class="search-icon"></i>
+                    <input type="text" id="customer-search-input" placeholder="Search sweets, snacks, drinks...">
+                    <button id="clear-search-btn" class="clear-search-btn hidden">
+                        <i data-lucide="x"></i>
+                    </button>
+                </div>
+
+                <!-- Items Grid List -->
+                <div class="customer-items-list" id="customer-items-list-container">
+                    <!-- Dynamically loaded items -->
+                </div>
+            </section>
+
+            <!-- About & Location Section -->
+            <section class="customer-info-section" id="cust-about">
+                <div class="info-container">
+                    <div class="info-block">
+                        <h3>Our Heritage</h3>
+                        <p>Serving tradition and trust since 1990. We use pure ghee, fresh ingredients, and time-honored recipes to craft premium sweets and snacks that bring joy to every occasion.</p>
+                    </div>
+                    <div class="info-block" id="cust-location">
+                        <h3>Find Us</h3>
+                        <p>123 Sweet Street, Candy Bazar, New Delhi, India</p>
+                        <p><strong>Hours:</strong> 9:00 AM - 10:00 PM (Everyday)</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Customer Footer -->
+            <footer class="customer-footer">
+                <div class="customer-footer-brand">
+                    <h3>Universal Sweets</h3>
+                    <span>Tradition. Taste. Trust.</span>
+                </div>
+                <div class="customer-footer-socials">
+                    <a href="https://instagram.com/universalsweets53" target="_blank" rel="noopener noreferrer" aria-label="Visit Universal Sweets on Instagram" class="customer-social-icon instagram-icon">
+                        <i data-lucide="instagram"></i>
+                    </a>
+                </div>
+                <p class="customer-footer-copy">&copy; 2026 Universal Sweets. All rights reserved.</p>
+            </footer>
+        </div>
+
+        <!-- Floating Bottom Cart Bar for WhatsApp Orders -->
+        <div class="customer-floating-cart hidden" id="customer-floating-cart-bar">
+            <div class="cart-summary">
+                <span class="cart-qty-indicator" id="cart-item-count">0</span>
+                <div class="cart-summary-text">
+                    <span class="cart-label">WhatsApp Order</span>
+                    <span class="cart-total-price" id="cart-total-price-val">₹0</span>
+                </div>
             </div>
+            <button class="cart-checkout-btn" id="btnCartCheckout">
+                <span>Place Order</span> <i data-lucide="arrow-right"></i>
+            </button>
         </div>
     </div>
 
@@ -505,6 +525,6 @@
     </div>
 
     <!-- Script loading -->
-    <script src="app.js"></script>
+    <script src="app.js?v=2"></script>
 </body>
 </html>
