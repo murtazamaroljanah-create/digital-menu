@@ -115,10 +115,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const view = urlParams.get("view");
     if (view === "admin") {
         switchToAdminView();
-    } else if (view === "menu" || view === "customer") {
-        switchToCustomerView();
     } else {
-        switchToLandingView();
+        switchToCustomerView();
     }
 
     // Bind event listeners
@@ -130,16 +128,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // 5. Navigation & View Toggling
-function switchToLandingView() {
-    document.body.className = "landing-view-active";
-    const viewSwitcher = document.getElementById("viewSwitcher");
-    if (viewSwitcher) {
-        viewSwitcher.style.display = "none";
-    }
-    window.history.replaceState({}, '', window.location.pathname);
-    renderAll();
-}
-
 function switchToAdminView() {
     document.body.className = "admin-view-active";
     const viewSwitcher = document.getElementById("viewSwitcher");
@@ -158,7 +146,7 @@ function switchToCustomerView() {
     if (viewSwitcher) {
         viewSwitcher.style.display = "none";
     }
-    window.history.replaceState({}, '', window.location.pathname + "?view=menu");
+    window.history.replaceState({}, '', window.location.pathname);
     renderAll();
 }
 
@@ -809,26 +797,31 @@ function bindEventListeners() {
         });
     }
 
-    // Landing Page interactions
-    const btnExploreLanding = document.getElementById("btnExploreMenuLanding");
-    if (btnExploreLanding) {
-        btnExploreLanding.addEventListener("click", switchToCustomerView);
+    // Customer Hero interactions
+    const btnExploreMenuHero = document.getElementById("btnExploreMenuHero");
+    if (btnExploreMenuHero) {
+        btnExploreMenuHero.addEventListener("click", () => {
+            const catalogSec = document.getElementById("customer-catalog-section");
+            if (catalogSec) {
+                catalogSec.scrollIntoView({ behavior: "smooth" });
+            }
+        });
     }
 
-    const btnWhatsAppLanding = document.getElementById("btnWhatsAppLanding");
-    if (btnWhatsAppLanding) {
-        btnWhatsAppLanding.addEventListener("click", () => {
+    const btnWhatsAppHero = document.getElementById("btnWhatsAppHero");
+    if (btnWhatsAppHero) {
+        btnWhatsAppHero.addEventListener("click", () => {
             const msg = encodeURIComponent("Hello Universal Sweets,\n\nI would like to know more about your sweets and place an order.");
             window.open(`https://wa.me/919224701020?text=${msg}`, "_blank");
         });
     }
 
-    // Footer Links
-    const footerLinkHome = document.getElementById("footerLinkHome");
-    if (footerLinkHome) {
-        footerLinkHome.addEventListener("click", (e) => {
+    // Customer Footer Links
+    const footerLinkAdmin = document.getElementById("footerLinkAdmin");
+    if (footerLinkAdmin) {
+        footerLinkAdmin.addEventListener("click", (e) => {
             e.preventDefault();
-            switchToLandingView();
+            switchToAdminView();
         });
     }
 
@@ -836,7 +829,10 @@ function bindEventListeners() {
     if (footerLinkExplore) {
         footerLinkExplore.addEventListener("click", (e) => {
             e.preventDefault();
-            switchToCustomerView();
+            const catalogSec = document.getElementById("customer-catalog-section");
+            if (catalogSec) {
+                catalogSec.scrollIntoView({ behavior: "smooth" });
+            }
         });
     }
 
