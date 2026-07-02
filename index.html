@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
     <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lucide@0.344.0/dist/umd/lucide.min.js"></script>
     <link rel="stylesheet" href="style.css?v=2">
 </head>
 <body class="admin-view-active">
@@ -18,6 +18,227 @@
     <div class="view-switcher" id="viewSwitcher">
         <button id="switchToAdmin" class="active-view-btn"><i data-lucide="layout-dashboard"></i> Admin Dashboard</button>
         <button id="switchToCustomer"><i data-lucide="smartphone"></i> Customer Menu</button>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 0. PRODUCT SHOWCASE LANDING VIEW           -->
+    <!-- ========================================== -->
+    <div id="landing-view" class="view-container">
+        <!-- Landing Header -->
+        <header class="landing-header">
+            <div class="landing-nav-container">
+                <div class="landing-logo">
+                    <h2>Universal</h2>
+                    <span>— SWEETS —</span>
+                </div>
+                <div class="landing-nav-actions">
+                    <button class="btn btn-secondary btn-sm" id="btnExploreMenuLanding">Explore Menu</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Landing Hero Showcase -->
+        <main class="landing-hero-container">
+            <div class="landing-hero-grid">
+                <!-- Left Side: Phone Mockups -->
+                <div class="landing-hero-left">
+                    <div class="landing-hero-content-text">
+                        <span class="brand-eyebrow">UNIVERSAL SWEETS</span>
+                        <h1 class="hero-main-title">DIGITAL MENU CARD</h1>
+                        <p class="hero-subtitle">Share our sweets & snacks with love.</p>
+                        <div class="decorative-divider">
+                            <span class="divider-line"></span>
+                            <i data-lucide="heart" class="divider-heart"></i>
+                            <span class="divider-line"></span>
+                        </div>
+                    </div>
+
+                    <!-- Dual Mobile Phone Mockups -->
+                    <div class="mockups-row">
+                        <!-- Mockup 1: Customer Splash -->
+                        <div class="phone-mockup-frame">
+                            <div class="phone-mockup-screen splash-screen-mockup">
+                                <div class="mockup-hero-bg">
+                                    <img src="assets/hero_sweets.png" alt="Sweets Platter">
+                                </div>
+                                <div class="mockup-hero-overlay"></div>
+                                <div class="mockup-splash-content">
+                                    <div class="mockup-logo-badge">
+                                        <h3>Universal</h3>
+                                        <span>— SWEETS —</span>
+                                    </div>
+                                    <p class="mockup-tagline">Tradition. Taste. Trust.</p>
+                                    
+                                    <div class="mockup-badges">
+                                        <div class="mockup-badge"><i data-lucide="leaf"></i> Pure</div>
+                                        <div class="mockup-badge"><i data-lucide="shield-check"></i> Clean</div>
+                                        <div class="mockup-badge"><i data-lucide="calendar"></i> Fresh</div>
+                                    </div>
+                                    <button class="mockup-cta-btn"><i data-lucide="shopping-bag"></i> Order on WhatsApp</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Mockup 2: Customer Catalog -->
+                        <div class="phone-mockup-frame">
+                            <div class="phone-mockup-screen catalog-screen-mockup">
+                                <div class="mockup-catalog-header">
+                                    <h4>Our Menu</h4>
+                                    <div class="mockup-categories">
+                                        <span class="mock-tab active">All</span>
+                                        <span class="mock-tab">Sweets</span>
+                                        <span class="mock-tab">Snacks</span>
+                                        <span class="mock-tab">Beverages</span>
+                                    </div>
+                                </div>
+                                <div class="mockup-catalog-body">
+                                    <!-- Kaju Katli Card -->
+                                    <div class="mockup-item-card">
+                                        <img src="assets/kaju_katli.png" alt="Kaju Katli">
+                                        <div class="mockup-item-info">
+                                            <h5>Kaju Katli</h5>
+                                            <p>Cashew sweet with silver leaf</p>
+                                            <div class="mockup-item-foot">
+                                                <span>₹720<small>/kg</small></span>
+                                                <span class="mockup-add-btn">Add</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Motichoor Ladoo Card -->
+                                    <div class="mockup-item-card">
+                                        <img src="assets/ladoo.png" alt="Motichoor Ladoo">
+                                        <div class="mockup-item-info">
+                                            <h5>Motichoor Ladoo</h5>
+                                            <p>Classic boondi ladoo</p>
+                                            <div class="mockup-item-foot">
+                                                <span>₹560<small>/kg</small></span>
+                                                <span class="mockup-add-btn">Add</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Features Row below Phone Mockups -->
+                    <div class="features-pill-row">
+                        <div class="feature-pill-item"><i data-lucide="sparkles"></i> Beautiful Design</div>
+                        <div class="feature-pill-item"><i data-lucide="share-2"></i> Easy to Share</div>
+                        <div class="feature-pill-item"><i data-lucide="smartphone"></i> Mobile Friendly</div>
+                        <div class="feature-pill-item"><i data-lucide="refresh-cw"></i> Always Updated</div>
+                    </div>
+                </div>
+
+                <!-- Right Side: Desktop Admin Preview -->
+                <div class="landing-hero-right">
+                    <!-- Browser Chrome Mockup wrapper -->
+                    <div class="browser-mockup-frame">
+                        <div class="browser-mockup-header">
+                            <div class="browser-dots">
+                                <span class="dot red"></span>
+                                <span class="dot yellow"></span>
+                                <span class="dot green"></span>
+                            </div>
+                            <div class="browser-address-bar">https://admin.universalsweets.menu</div>
+                        </div>
+                        
+                        <!-- Mini Dashboard Mockup -->
+                        <div class="browser-mockup-body">
+                            <div class="mini-dashboard">
+                                <!-- Mini Sidebar -->
+                                <div class="mini-sidebar">
+                                    <div class="mini-sidebar-logo">Universal</div>
+                                    <ul class="mini-sidebar-menu">
+                                        <li class="active"><i data-lucide="layout-dashboard"></i> Dashboard</li>
+                                        <li><i data-lucide="folder-kanban"></i> Menu Sections</li>
+                                        <li><i data-lucide="cookie"></i> Items</li>
+                                        <li><i data-lucide="tags"></i> Categories</li>
+                                        <li><i data-lucide="trending-up"></i> Analytics</li>
+                                        <li><i data-lucide="settings"></i> Settings</li>
+                                    </ul>
+                                </div>
+                                <!-- Mini Main -->
+                                <div class="mini-main">
+                                    <div class="mini-main-header">
+                                        <h3>Dashboard</h3>
+                                        <div class="mini-profile">Admin</div>
+                                    </div>
+                                    <!-- Mini Stats -->
+                                    <div class="mini-stats-grid">
+                                        <div class="mini-stat-card">
+                                            <span>Total Items</span>
+                                            <h4>48</h4>
+                                        </div>
+                                        <div class="mini-stat-card">
+                                            <span>Categories</span>
+                                            <h4>5</h4>
+                                        </div>
+                                        <div class="mini-stat-card">
+                                            <span>Total Views</span>
+                                            <h4>1,248</h4>
+                                        </div>
+                                    </div>
+                                    <!-- Mini Grid content -->
+                                    <div class="mini-details-grid">
+                                        <div class="mini-details-card">
+                                            <h5>Menu Sections</h5>
+                                            <ul class="mini-list">
+                                                <li><span>Sweets</span> <small>22 items</small></li>
+                                                <li><span>Snacks</span> <small>15 items</small></li>
+                                                <li><span>Beverages</span> <small>6 items</small></li>
+                                            </ul>
+                                        </div>
+                                        <div class="mini-details-card">
+                                            <h5>Recent Items</h5>
+                                            <ul class="mini-list-items">
+                                                <li><span>Kaju Katli</span> <span>₹720/kg</span> <span class="mini-toggle active"></span></li>
+                                                <li><span>Motichoor Ladoo</span> <span>₹560/kg</span> <span class="mini-toggle active"></span></li>
+                                                <li><span>Badam Milk</span> <span>₹120/glass</span> <span class="mini-toggle active"></span></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Landing CTA Footer Section -->
+        <section class="landing-cta-section">
+            <div class="landing-cta-card">
+                <h2>Ready to explore our delicacies?</h2>
+                <p>Browse our digital catalog, select your items, and order instantly over WhatsApp!</p>
+                <div class="landing-cta-btns">
+                    <button class="btn btn-primary" id="btnExploreMenuLanding">Explore Digital Menu</button>
+                    <button class="btn btn-whatsapp" id="btnWhatsAppLanding"><i data-lucide="message-square"></i> Order on WhatsApp</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Landing Public Footer -->
+        <footer class="landing-footer">
+            <div class="landing-footer-container">
+                <div class="landing-footer-logo">
+                    <h2>Universal Sweets</h2>
+                    <p>Tradition. Taste. Trust.</p>
+                </div>
+                <div class="landing-footer-links">
+                    <a href="#" id="footerLinkHome">Home</a>
+                    <a href="#" id="footerLinkExplore">Explore Menu</a>
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                </div>
+                <div class="landing-footer-social">
+                    <a href="https://instagram.com/universalsweets53" target="_blank" rel="noopener noreferrer" aria-label="Visit Universal Sweets on Instagram" class="instagram-link-footer">
+                        <i data-lucide="instagram"></i>
+                    </a>
+                </div>
+            </div>
+            <p class="landing-footer-copy">&copy; 2026 Universal Sweets. All rights reserved.</p>
+        </footer>
     </div>
 
     <!-- ========================================== -->
@@ -364,7 +585,8 @@
                     </div>
                     <div class="info-block" id="cust-location">
                         <h3>Find Us</h3>
-                        <p>123 Sweet Street, Candy Bazar, New Delhi, India</p>
+                        <p>Hussainy Colony, Near Bhabhola Naka, Vasai West, 401202, Maharashtra, India</p>
+                        <p><strong>Phone:</strong> +91 92247 01020</p>
                         <p><strong>Hours:</strong> 9:00 AM - 10:00 PM (Everyday)</p>
                     </div>
                 </div>

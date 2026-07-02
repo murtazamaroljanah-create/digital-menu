@@ -115,8 +115,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const view = urlParams.get("view");
     if (view === "admin") {
         switchToAdminView();
-    } else {
+    } else if (view === "menu" || view === "customer") {
         switchToCustomerView();
+    } else {
+        switchToLandingView();
     }
 
     // Bind event listeners
@@ -128,6 +130,16 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // 5. Navigation & View Toggling
+function switchToLandingView() {
+    document.body.className = "landing-view-active";
+    const viewSwitcher = document.getElementById("viewSwitcher");
+    if (viewSwitcher) {
+        viewSwitcher.style.display = "none";
+    }
+    window.history.replaceState({}, '', window.location.pathname);
+    renderAll();
+}
+
 function switchToAdminView() {
     document.body.className = "admin-view-active";
     const viewSwitcher = document.getElementById("viewSwitcher");
@@ -146,7 +158,7 @@ function switchToCustomerView() {
     if (viewSwitcher) {
         viewSwitcher.style.display = "none";
     }
-    window.history.replaceState({}, '', window.location.pathname);
+    window.history.replaceState({}, '', window.location.pathname + "?view=menu");
     renderAll();
 }
 
@@ -467,7 +479,7 @@ function sendWhatsAppOrder() {
     // WhatsApp base URL (We can direct to a dummy business phone number or generic link)
     // Using 919876543210 as a placeholder or letting user send it dynamically
     const encodedText = encodeURIComponent(orderText);
-    const whatsappUrl = `https://wa.me/919876543210?text=${encodedText}`;
+    const whatsappUrl = `https://wa.me/919224701020?text=${encodedText}`;
 
     // Open WhatsApp in new tab
     window.open(whatsappUrl, '_blank');
@@ -793,7 +805,38 @@ function bindEventListeners() {
     const navWhatsAppBtn = document.getElementById("navWhatsAppBtn");
     if (navWhatsAppBtn) {
         navWhatsAppBtn.addEventListener("click", () => {
-            window.open("https://wa.me/919876543210", "_blank");
+            window.open("https://wa.me/919224701020", "_blank");
+        });
+    }
+
+    // Landing Page interactions
+    const btnExploreLanding = document.getElementById("btnExploreMenuLanding");
+    if (btnExploreLanding) {
+        btnExploreLanding.addEventListener("click", switchToCustomerView);
+    }
+
+    const btnWhatsAppLanding = document.getElementById("btnWhatsAppLanding");
+    if (btnWhatsAppLanding) {
+        btnWhatsAppLanding.addEventListener("click", () => {
+            const msg = encodeURIComponent("Hello Universal Sweets,\n\nI would like to know more about your sweets and place an order.");
+            window.open(`https://wa.me/919224701020?text=${msg}`, "_blank");
+        });
+    }
+
+    // Footer Links
+    const footerLinkHome = document.getElementById("footerLinkHome");
+    if (footerLinkHome) {
+        footerLinkHome.addEventListener("click", (e) => {
+            e.preventDefault();
+            switchToLandingView();
+        });
+    }
+
+    const footerLinkExplore = document.getElementById("footerLinkExplore");
+    if (footerLinkExplore) {
+        footerLinkExplore.addEventListener("click", (e) => {
+            e.preventDefault();
+            switchToCustomerView();
         });
     }
 
