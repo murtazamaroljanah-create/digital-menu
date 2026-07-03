@@ -114,7 +114,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const urlParams = new URLSearchParams(window.location.search);
     const view = urlParams.get("view");
     if (view === "admin") {
-        switchToAdminView();
+        requireAdminAuth();
     } else {
         switchToCustomerView();
     }
@@ -126,6 +126,85 @@ document.addEventListener("DOMContentLoaded", () => {
     updateStats();
     renderAll();
 });
+
+// ============================================================
+// AUTH: Admin Login System
+// Credentials: username=universalsweets / password=murtaza123
+// ============================================================
+const ADMIN_USERNAME = "universalsweets";
+const ADMIN_PASSWORD = "murtaza123";
+const AUTH_SESSION_KEY = "us_admin_auth";
+
+function isAdminAuthenticated() {
+    return sessionStorage.getItem(AUTH_SESSION_KEY) === "true";
+}
+
+function requireAdminAuth() {
+    if (isAdminAuthenticated()) {
+        switchToAdminView();
+    } else {
+        showLoginOverlay();
+    }
+}
+
+function showLoginOverlay() {
+    const overlay = document.getElementById("admin-login-overlay");
+    if (overlay) {
+        overlay.classList.remove("hidden");
+        // Clear any previous inputs/errors
+        const usernameInput = document.getElementById("loginUsername");
+        const passwordInput = document.getElementById("loginPassword");
+        const errorEl = document.getElementById("loginError");
+        if (usernameInput) usernameInput.value = "";
+        if (passwordInput) passwordInput.value = "";
+        if (errorEl) errorEl.classList.add("hidden");
+        lucide.createIcons();
+        // Focus username field
+        setTimeout(() => { if (usernameInput) usernameInput.focus(); }, 100);
+    }
+}
+
+function hideLoginOverlay() {
+    const overlay = document.getElementById("admin-login-overlay");
+    if (overlay) overlay.classList.add("hidden");
+}
+
+function handleAdminLogin(e) {
+    e.preventDefault();
+    const username = (document.getElementById("loginUsername")?.value || "").trim();
+    const password = (document.getElementById("loginPassword")?.value || "").trim();
+    const errorEl = document.getElementById("loginError");
+    const btn = document.getElementById("btnAdminLogin");
+
+    // Loading state
+    if (btn) { btn.disabled = true; btn.innerHTML = '<i data-lucide="loader-2"></i> Verifying...'; lucide.createIcons(); }
+
+    setTimeout(() => {
+        if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+            // ✅ Correct credentials
+            sessionStorage.setItem(AUTH_SESSION_KEY, "true");
+            if (errorEl) errorEl.classList.add("hidden");
+            hideLoginOverlay();
+            switchToAdminView();
+        } else {
+            // ❌ Wrong credentials — shake the card and show error
+            if (errorEl) errorEl.classList.remove("hidden");
+            const card = document.querySelector(".login-card");
+            if (card) {
+                card.classList.add("shake");
+                setTimeout(() => card.classList.remove("shake"), 500);
+            }
+        }
+        if (btn) { btn.disabled = false; btn.innerHTML = '<i data-lucide="log-in"></i> Login to Dashboard'; lucide.createIcons(); }
+    }, 400);
+}
+
+function handleAdminLogout(e) {
+    if (e) e.preventDefault();
+    sessionStorage.removeItem(AUTH_SESSION_KEY);
+    switchToCustomerView();
+}
+
 
 // 5. Navigation & View Toggling
 function switchToAdminView() {
@@ -693,10 +772,42 @@ function copyShareLink() {
 
 // 11. Event Listeners Binding
 function bindEventListeners() {
-    // View Switchers
+    // Admin Login Form
+    const loginForm = document.getElementById("adminLoginForm");
+    if (loginForm) loginForm.addEventListener("submit", handleAdminLogin);
+
+    // Toggle password visibility
+    const togglePwdBtn = document.getElementById("toggleLoginPassword");
+    if (togglePwdBtn) {
+        togglePwdBtn.addEventListener("click", () => {
+            const pwdInput = document.getElementById("loginPassword");
+            if (pwdInput) {
+                const isHidden = pwdInput.type === "password";
+                pwdInput.type = isHidden ? "text" : "password";
+                togglePwdBtn.innerHTML = isHidden ? '<i data-lucide="eye-off"></i>' : '<i data-lucide="eye"></i>';
+                lucide.createIcons();
+            }
+        });
+    }
+
+    // Login overlay back-to-menu link
+    const loginBackLink = document.getElementById("loginBackToMenu");
+    if (loginBackLink) {
+        loginBackLink.addEventListener("click", (e) => {
+            e.preventDefault();
+            hideLoginOverlay();
+            switchToCustomerView();
+        });
+    }
+
+    // Admin Logout
+    const logoutBtn = document.getElementById("adminLogoutBtn");
+    if (logoutBtn) logoutBtn.addEventListener("click", handleAdminLogout);
+
+    // View Switchers (developer helper)
     const btnToAdmin = document.getElementById("switchToAdmin");
     const btnToCustomer = document.getElementById("switchToCustomer");
-    if (btnToAdmin) btnToAdmin.addEventListener("click", switchToAdminView);
+    if (btnToAdmin) btnToAdmin.addEventListener("click", requireAdminAuth);
     if (btnToCustomer) btnToCustomer.addEventListener("click", switchToCustomerView);
 
     // Sidebar Preview Menu click
@@ -821,7 +932,7 @@ function bindEventListeners() {
     if (footerLinkAdmin) {
         footerLinkAdmin.addEventListener("click", (e) => {
             e.preventDefault();
-            switchToAdminView();
+            requireAdminAuth();
         });
     }
 

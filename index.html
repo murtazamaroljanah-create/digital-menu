@@ -20,6 +20,62 @@
         <button id="switchToCustomer"><i data-lucide="smartphone"></i> Customer Menu</button>
     </div>
 
+    <!-- ========================================== -->
+    <!-- ADMIN LOGIN OVERLAY                        -->
+    <!-- ========================================== -->
+    <div id="admin-login-overlay" class="admin-login-overlay hidden">
+        <div class="login-card">
+            <!-- Logo -->
+            <div class="login-logo">
+                <h2>Universal</h2>
+                <span>— SWEETS —</span>
+            </div>
+            <div class="login-header">
+                <div class="login-lock-icon">
+                    <i data-lucide="lock"></i>
+                </div>
+                <h3>Admin Portal</h3>
+                <p>Enter your credentials to access the dashboard</p>
+            </div>
+
+            <!-- Login Form -->
+            <form id="adminLoginForm" class="login-form" autocomplete="off">
+                <div class="login-field">
+                    <label for="loginUsername">Username</label>
+                    <div class="login-input-wrapper">
+                        <i data-lucide="user"></i>
+                        <input type="text" id="loginUsername" placeholder="Enter username" autocomplete="username">
+                    </div>
+                </div>
+                <div class="login-field">
+                    <label for="loginPassword">Password</label>
+                    <div class="login-input-wrapper">
+                        <i data-lucide="key-round"></i>
+                        <input type="password" id="loginPassword" placeholder="Enter password" autocomplete="current-password">
+                        <button type="button" id="toggleLoginPassword" class="toggle-password-btn" aria-label="Toggle password visibility">
+                            <i data-lucide="eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Error message -->
+                <div id="loginError" class="login-error hidden">
+                    <i data-lucide="alert-circle"></i>
+                    <span>Incorrect username or password. Please try again.</span>
+                </div>
+
+                <button type="submit" class="btn-login" id="btnAdminLogin">
+                    <i data-lucide="log-in"></i>
+                    Login to Dashboard
+                </button>
+            </form>
+
+            <!-- Back to Menu -->
+            <a href="#" class="login-back-link" id="loginBackToMenu">
+                <i data-lucide="arrow-left"></i> Back to Customer Menu
+            </a>
+        </div>
+    </div>
 
 
     <!-- ========================================== -->
@@ -70,7 +126,7 @@
                 </ul>
             </div>
             <div class="sidebar-footer">
-                <a href="#" class="logout-link"><i data-lucide="log-out"></i> Logout</a>
+                <a href="#" class="logout-link" id="adminLogoutBtn"><i data-lucide="log-out"></i> <span>Logout</span></a>
             </div>
         </aside>
 

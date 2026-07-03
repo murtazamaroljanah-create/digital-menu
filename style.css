@@ -87,6 +87,250 @@ body.customer-view-active #customer-view {
 }
 
 /* ==========================================================================
+   Admin Login Overlay
+   ========================================================================== */
+.admin-login-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: linear-gradient(135deg, #1a0f0b 0%, #2C1F1B 50%, #1a0f0b 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    animation: fadeIn 0.3s ease;
+}
+
+.admin-login-overlay.hidden {
+    display: none !important;
+}
+
+.login-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(197, 168, 128, 0.25);
+    border-radius: 20px;
+    padding: 40px 48px;
+    width: 100%;
+    max-width: 440px;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 32px 80px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(197, 168, 128, 0.1);
+    text-align: center;
+}
+
+/* Shake animation on wrong password */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    15% { transform: translateX(-10px); }
+    30% { transform: translateX(10px); }
+    45% { transform: translateX(-8px); }
+    60% { transform: translateX(8px); }
+    75% { transform: translateX(-4px); }
+    90% { transform: translateX(4px); }
+}
+.login-card.shake {
+    animation: shake 0.5s cubic-bezier(.36,.07,.19,.97);
+}
+
+.login-logo {
+    margin-bottom: 28px;
+}
+
+.login-logo h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--accent-gold);
+    line-height: 1;
+}
+
+.login-logo span {
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: rgba(197, 168, 128, 0.6);
+    display: block;
+    margin-top: 4px;
+}
+
+.login-lock-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: rgba(197, 168, 128, 0.12);
+    border: 1px solid rgba(197, 168, 128, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px auto;
+    color: var(--accent-gold);
+}
+
+.login-lock-icon i { width: 22px; height: 22px; }
+
+.login-header h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 6px;
+}
+
+.login-header p {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.45);
+    line-height: 1.5;
+}
+
+.login-form {
+    margin-top: 28px;
+    text-align: left;
+}
+
+.login-field {
+    margin-bottom: 16px;
+}
+
+.login-field label {
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.5);
+    display: block;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.login-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.login-input-wrapper > i:first-child {
+    position: absolute;
+    left: 14px;
+    width: 16px;
+    height: 16px;
+    color: rgba(197, 168, 128, 0.5);
+    pointer-events: none;
+}
+
+.login-input-wrapper input {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    padding: 12px 48px 12px 42px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 14px;
+    color: var(--white);
+    outline: none;
+    transition: var(--transition-fast);
+}
+
+.login-input-wrapper input::placeholder {
+    color: rgba(255, 255, 255, 0.25);
+}
+
+.login-input-wrapper input:focus {
+    border-color: rgba(197, 168, 128, 0.6);
+    background: rgba(255, 255, 255, 0.09);
+    box-shadow: 0 0 0 3px rgba(197, 168, 128, 0.1);
+}
+
+.toggle-password-btn {
+    position: absolute;
+    right: 14px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: rgba(197, 168, 128, 0.5);
+    display: flex;
+    align-items: center;
+    padding: 0;
+    transition: var(--transition-fast);
+}
+
+.toggle-password-btn:hover {
+    color: var(--accent-gold);
+}
+
+.toggle-password-btn i { width: 16px; height: 16px; }
+
+.login-error {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(211, 47, 47, 0.12);
+    border: 1px solid rgba(211, 47, 47, 0.3);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 16px;
+    color: #ff7070;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.login-error i { width: 15px; height: 15px; flex-shrink: 0; }
+
+.login-error.hidden { display: none; }
+
+.btn-login {
+    width: 100%;
+    background: var(--accent-gold);
+    border: none;
+    border-radius: 10px;
+    padding: 14px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--primary-dark);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: var(--transition-fast);
+    margin-top: 4px;
+}
+
+.btn-login i { width: 18px; height: 18px; }
+
+.btn-login:hover:not(:disabled) {
+    background: var(--white);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(197, 168, 128, 0.25);
+}
+
+.btn-login:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.login-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 24px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.35);
+    text-decoration: none;
+    transition: var(--transition-fast);
+}
+
+.login-back-link i { width: 14px; height: 14px; }
+
+.login-back-link:hover {
+    color: var(--accent-gold);
+}
+
+@media (max-width: 480px) {
+    .login-card {
+        padding: 32px 24px;
+    }
+}
+
+/* ==========================================================================
    2. Floating Developer Helper / Switcher
    ========================================================================== */
 .view-switcher {
