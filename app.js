@@ -113,7 +113,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // Initialize UI views based on URL parameter or defaults
     const urlParams = new URLSearchParams(window.location.search);
     const view = urlParams.get("view");
-    if (view === "admin") {
+    const isAdminPath = window.location.pathname === "/admin" || window.location.pathname === "/admin/";
+    if (view === "admin" || isAdminPath) {
         requireAdminAuth();
     } else {
         switchToCustomerView();
@@ -215,7 +216,7 @@ function switchToAdminView() {
     }
     document.getElementById("switchToAdmin").classList.add("active-view-btn");
     document.getElementById("switchToCustomer").classList.remove("active-view-btn");
-    window.history.replaceState({}, '', window.location.pathname + "?view=admin");
+    window.history.replaceState({}, '', '/?view=admin');
     renderAll();
 }
 
