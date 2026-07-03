@@ -1,0 +1,1 @@
+{"rewrites":[{"source":"/menu","destination":"/?view=menu"},{"source":"/admin","destination":"/?view=admin"}]}
