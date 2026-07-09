@@ -471,8 +471,14 @@ function renderCart() {
         cartCountEl.innerText = totalItems;
         cartPriceEl.innerText = `₹${totalPrice}`;
         cartBar.classList.remove("hidden");
+        // Add space so content isn't hidden behind the floating cart
+        const appContent = document.querySelector(".customer-app-content");
+        if (appContent) appContent.style.paddingBottom = "100px";
     } else {
         cartBar.classList.add("hidden");
+        // Remove extra space when cart is hidden — footer sits flush
+        const appContent = document.querySelector(".customer-app-content");
+        if (appContent) appContent.style.paddingBottom = "0";
     }
 }
 

@@ -54,6 +54,8 @@ body {
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
+    margin: 0;
+    padding: 0;
 }
 
 /* Scrollbar Customization */
@@ -1192,7 +1194,7 @@ input:checked + .slider:before {
     padding: 0;
     overflow-y: auto;
     overflow-x: hidden;
-    padding-bottom: 100px;
+    /* padding-bottom is added by JS only when floating cart is visible */
     scroll-behavior: smooth;
 }
 
@@ -1305,14 +1307,15 @@ input:checked + .slider:before {
 /* ── Hero Section ── */
 .customer-hero {
     position: relative;
-    min-height: 640px;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
     overflow: hidden;
-    padding: 100px 32px;
+    padding: 80px 32px;
+    box-sizing: border-box;
 }
 
 .customer-hero-overlay {
@@ -1932,7 +1935,7 @@ input:checked + .slider:before {
 
 .info-subtitle {
     font-size: 15px;
-    color: rgba(255,255,255,0.45);
+    color: rgba(255,255,255,0.72);
     max-width: 520px;
     margin: 0 auto 48px;
     line-height: 1.7;
@@ -2017,12 +2020,15 @@ input:checked + .slider:before {
 .customer-footer {
     background: #0e0804;
     border-top: 1px solid rgba(197,168,128,0.1);
-    padding: 28px 32px;
+    padding: 24px 32px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 12px;
+    margin: 0;
+    /* Ensures footer is flush — no trailing space */
+    flex-shrink: 0;
 }
 
 .customer-footer-copy {
@@ -2057,7 +2063,8 @@ input:checked + .slider:before {
 @media (max-width: 768px) {
     .nav-links { display: none; }
     .nav-container { padding: 0 20px; }
-    .customer-hero { min-height: 500px; padding: 80px 20px; }
+    /* Keep full-screen hero on tablet too, with adjusted padding */
+    .customer-hero { min-height: 100vh; padding: 80px 20px; }
     .customer-tagline { font-size: 32px; }
     .customer-sub-tagline { font-size: 14px; }
     .customer-badges-grid {
@@ -2073,15 +2080,17 @@ input:checked + .slider:before {
     .customer-info-section { padding: 60px 20px; }
     .info-main-title { font-size: 28px; }
     .customer-floating-cart { padding: 14px 20px 18px; }
-    .customer-footer { padding: 20px; flex-direction: column; align-items: center; text-align: center; }
+    .customer-footer { padding: 20px; flex-direction: column; align-items: center; text-align: center; margin: 0; }
 }
 
 @media (max-width: 480px) {
     .customer-items-list { grid-template-columns: 1fr; }
     .hero-actions-row { flex-direction: column; align-items: center; }
     .btn-hero { width: 100%; max-width: 280px; }
-    .customer-tagline { font-size: 28px; }
-    .customer-catalog-header h2 { font-size: 30px; }
+    .customer-tagline { font-size: 26px; }
+    .customer-catalog-header h2 { font-size: 28px; }
+    /* Reduce hero to 90vh on small phones to avoid address-bar issues */
+    .customer-hero { min-height: 90vh; }
 }
 
 
@@ -2350,208 +2359,6 @@ input:checked + .slider:before {
     }
 }
 
-/* ==========================================================================
-   Customer Footer Styles
-   ========================================================================== */
-/* About & Location Panels */
-.customer-info-section {
-    background-color: var(--white);
-    padding: 80px 24px;
-    border-top: 1px solid rgba(197, 168, 128, 0.2);
-    text-align: center;
-}
-
-.info-eyebrow {
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    color: var(--accent-gold);
-    display: block;
-    margin-bottom: 8px;
-}
-
-.info-main-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 32px;
-    font-weight: 700;
-    color: var(--primary-dark);
-}
-
-.info-subtitle {
-    font-size: 15px;
-    color: var(--text-muted);
-    margin: 8px auto 40px auto;
-    max-width: 600px;
-    line-height: 1.6;
-}
-
-.location-card {
-    background-color: var(--white);
-    border: 1px solid rgba(44, 31, 27, 0.08);
-    border-radius: var(--border-radius-md);
-    box-shadow: var(--shadow-md);
-    max-width: 960px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 32px;
-    padding: 32px;
-    text-align: left;
-    align-items: center;
-}
-
-.location-details-list {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-}
-
-.location-detail-item {
-    display: flex;
-    gap: 16px;
-    align-items: flex-start;
-}
-
-.location-detail-item .detail-icon {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background-color: var(--accent-gold-pale);
-    color: var(--accent-gold-dark);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-
-.location-detail-item .detail-icon i {
-    width: 16px;
-    height: 16px;
-}
-
-.detail-text strong {
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--primary-dark);
-    display: block;
-    margin-bottom: 4px;
-}
-
-.detail-text p {
-    font-size: 13px;
-    color: var(--text-muted);
-    line-height: 1.5;
-}
-
-.location-map-wrapper {
-    border-radius: var(--border-radius-sm);
-    overflow: hidden;
-    border: 1px solid rgba(44, 31, 27, 0.08);
-    height: 240px;
-    width: 100%;
-}
-
-.location-map-wrapper iframe {
-    width: 100%;
-    height: 100%;
-    border: 0;
-}
-
-.customer-footer {
-    background-color: var(--primary-dark);
-    color: var(--text-muted-light);
-    padding: 40px 24px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-    margin: 0;
-    width: 100%;
-}
-
-.customer-footer-copy {
-    font-size: 12px;
-    color: var(--text-muted-light);
-}
-
-.customer-footer-links {
-    display: flex;
-    gap: 24px;
-}
-
-.customer-footer-links a {
-    color: var(--text-muted-light);
-    text-decoration: none;
-    font-size: 13px;
-    font-weight: 600;
-    transition: var(--transition-fast);
-}
-
-.customer-footer-links a:hover {
-    color: var(--accent-gold);
-}
-
-/* ==========================================
-   Media Queries for Website Responsiveness
-   ========================================== */
-@media (max-width: 1024px) {
-    .customer-items-list {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 24px;
-    }
-}
-
-@media (max-width: 768px) {
-    .customer-nav .nav-links {
-        display: none; /* Hide navigation links on small screens */
-    }
-    .customer-badges-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 16px;
-    }
-    .location-card {
-        grid-template-columns: 1fr;
-        gap: 24px;
-        padding: 20px;
-    }
-    .customer-hero {
-        padding: 80px 20px;
-        min-height: 420px;
-    }
-    .customer-logo-badge h1 {
-        font-size: 20px;
-    }
-    .customer-tagline {
-        font-size: 32px;
-    }
-    .customer-catalog {
-        padding: 40px 20px;
-    }
-    .customer-catalog-header h2 {
-        font-size: 28px;
-    }
-    .customer-footer {
-        flex-direction: column;
-        gap: 16px;
-        text-align: center;
-    }
-}
-
-@media (max-width: 600px) {
-    .customer-items-list {
-        grid-template-columns: 1fr;
-    }
-    .customer-category-tabs {
-        justify-content: flex-start;
-        padding-left: 16px;
-    }
-    .customer-floating-cart {
-        padding: 12px 24px 20px 24px;
-    }
-    .customer-info-section {
-        padding: 40px 20px;
-    }
-}
 
 /* ==========================================================================
    5. Product Showcase Landing View Styles
