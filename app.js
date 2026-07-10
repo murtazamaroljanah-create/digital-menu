@@ -6,7 +6,7 @@
 // Replace these with your actual Supabase project URL and anon key
 // Get them from: https://supabase.com → Your Project → Settings → API
 const SUPABASE_URL  = "https://lijzpumlvbjgjbfmhdif.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_Lcb6Q6i7d42yIdka93j5xQ_4cIoDbq8";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxpanpwdW1sdmJqZ2piZm1oZGlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM2Njc5MDksImV4cCI6MjA5OTI0MzkwOX0.gM7zJO3OahGq8V_qyfOtMsCdhpJ5zyi67FWPOYAAdmI";
 
 // Create Supabase client (supabase global is loaded from CDN in index.html)
 let db = null;
