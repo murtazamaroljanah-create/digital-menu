@@ -1,11 +1,5 @@
 {
   "name": "universal-sweets-menu",
   "version": "1.0.0",
-  "description": "Universal Sweets Digital Menu with MongoDB backend",
-  "dependencies": {
-    "mongodb": "^6.3.0"
-  },
-  "engines": {
-    "node": ">=18.x"
-  }
+  "description": "Universal Sweets Digital Menu with Supabase backend"
 }

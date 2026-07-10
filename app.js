@@ -2,118 +2,125 @@
    Universal Sweets - Digital Menu & Admin JavaScript
    ========================================================================== */
 
-// 1. Default / Seed Data (used as fallback if API is unavailable)
+// ── Supabase Configuration ─────────────────────────────────────────────────
+// Replace these with your actual Supabase project URL and anon key
+// Get them from: https://supabase.com → Your Project → Settings → API
+const SUPABASE_URL  = "YOUR_SUPABASE_URL";       // e.g. https://xxxx.supabase.co
+const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY"; // long string starting with eyJ...
+
+// Create Supabase client (supabase global is loaded from CDN in index.html)
+let db = null;
+function initSupabase() {
+    if (SUPABASE_URL === "YOUR_SUPABASE_URL" || !window.supabase) return null;
+    return window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+}
+
+// ── Default Data (fallback when Supabase is not configured) ────────────────
 const DEFAULT_SECTIONS = [
-    { id: "sec-1", name: "Sweets", icon: "cookie" },
-    { id: "sec-2", name: "Snacks", icon: "sandwich" },
-    { id: "sec-3", name: "Beverages", icon: "cup-soda" },
-    { id: "sec-4", name: "Special Packs", icon: "gift" },
-    { id: "sec-5", name: "Others", icon: "heart" }
+    { id: "sec-1", name: "Sweets",        icon: "cookie"   },
+    { id: "sec-2", name: "Snacks",        icon: "sandwich" },
+    { id: "sec-3", name: "Beverages",     icon: "cup-soda" },
+    { id: "sec-4", name: "Special Packs", icon: "gift"     },
+    { id: "sec-5", name: "Others",        icon: "heart"    }
 ];
 
 const DEFAULT_ITEMS = [
-    { id: "item-1", name: "Kaju Katli", category: "Sweets", price: 720, unit: "kg", desc: "Rich and soft cashew slices made with pure ghee and decorated with premium silver leaf.", image: "assets/kaju_katli.png", available: true },
-    { id: "item-2", name: "Motichoor Ladoo", category: "Sweets", price: 560, unit: "kg", desc: "Classic soft laddoo made from fine boondi pearls, pure ghee, and a hint of cardamom.", image: "assets/ladoo.png", available: true },
-    { id: "item-3", name: "Mathri", category: "Snacks", price: 280, unit: "kg", desc: "Crispy and savory traditional crackers spiced with carom seeds (ajwain), perfect for tea time.", image: "assets/mathri.png", available: true },
-    { id: "item-4", name: "Masala Khasta", category: "Snacks", price: 300, unit: "kg", desc: "Flaky crust stuffed with spicy and savory lentil mixture, fried to golden perfection.", image: "assets/mathri.png", available: true },
-    { id: "item-5", name: "Badam Milk", category: "Beverages", price: 120, unit: "glass", desc: "Rich, chilled almond milk infused with real saffron strands and garnished with sliced almonds.", image: "assets/badam_milk.png", available: true },
-    { id: "item-6", name: "Rasgulla", category: "Sweets", price: 440, unit: "kg", desc: "Soft and spongy traditional cottage cheese balls cooked in delicate sugar syrup.", image: "assets/rasgulla.png", available: true },
-    { id: "item-7", name: "Gulab Jamun", category: "Sweets", price: 440, unit: "kg", desc: "Warm golden-brown fried milk solids dumplings soaked in rose-flavored cardamom syrup.", image: "assets/gulab_jamun.png", available: true }
+    { id: "item-1", name: "Kaju Katli",      category: "Sweets",    price: 720, unit: "kg",    desc: "Rich and soft cashew slices made with pure ghee and decorated with premium silver leaf.",           image: "assets/kaju_katli.png",  available: true },
+    { id: "item-2", name: "Motichoor Ladoo", category: "Sweets",    price: 560, unit: "kg",    desc: "Classic soft laddoo made from fine boondi pearls, pure ghee, and a hint of cardamom.",              image: "assets/ladoo.png",        available: true },
+    { id: "item-3", name: "Mathri",          category: "Snacks",    price: 280, unit: "kg",    desc: "Crispy and savory traditional crackers spiced with carom seeds (ajwain), perfect for tea time.",    image: "assets/mathri.png",       available: true },
+    { id: "item-4", name: "Masala Khasta",   category: "Snacks",    price: 300, unit: "kg",    desc: "Flaky crust stuffed with spicy and savory lentil mixture, fried to golden perfection.",             image: "assets/mathri.png",       available: true },
+    { id: "item-5", name: "Badam Milk",      category: "Beverages", price: 120, unit: "glass", desc: "Rich, chilled almond milk infused with real saffron strands and garnished with sliced almonds.",    image: "assets/badam_milk.png",   available: true },
+    { id: "item-6", name: "Rasgulla",        category: "Sweets",    price: 440, unit: "kg",    desc: "Soft and spongy traditional cottage cheese balls cooked in delicate sugar syrup.",                  image: "assets/rasgulla.png",     available: true },
+    { id: "item-7", name: "Gulab Jamun",     category: "Sweets",    price: 440, unit: "kg",    desc: "Warm golden-brown fried milk solids dumplings soaked in rose-flavored cardamom syrup.",             image: "assets/gulab_jamun.png",  available: true }
 ];
 
-// 2. Global State
+// ── Global State ────────────────────────────────────────────────────────────
 let state = {
     sections: [],
     items: [],
     cart: {},
     activeCustomerCategory: "All",
     customerSearchQuery: "",
-    usingMongoDB: false  // true once API is confirmed working
+    usingSupabase: false
 };
 
-// ── API helpers ──────────────────────────────────────────────────────────────
-const API = {
-    async get(path) {
-        const r = await fetch(path);
-        if (!r.ok) throw new Error(`GET ${path} failed: ${r.status}`);
-        return r.json();
-    },
-    async post(path, body) {
-        const r = await fetch(path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-        if (!r.ok) throw new Error(`POST ${path} failed: ${r.status}`);
-        return r.json();
-    },
-    async put(path, body) {
-        const r = await fetch(path, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-        if (!r.ok) throw new Error(`PUT ${path} failed: ${r.status}`);
-        return r.json();
-    },
-    async delete(path) {
-        const r = await fetch(path, { method: 'DELETE' });
-        if (!r.ok) throw new Error(`DELETE ${path} failed: ${r.status}`);
-        return r.json();
-    }
-};
-
-// ── Load state from MongoDB (or fallback to localStorage) ───────────────────
+// ── Load data from Supabase (or fallback to localStorage) ──────────────────
 async function loadState() {
-    try {
-        const [sections, items] = await Promise.all([
-            API.get('/api/sections'),
-            API.get('/api/items')
-        ]);
+    db = initSupabase();
 
-        if (sections && sections.length > 0) {
-            state.sections = sections;
-            state.items = items;
-            state.usingMongoDB = true;
-            console.log('[DB] Loaded from MongoDB ✅');
-            return;
+    if (db) {
+        try {
+            const [{ data: sections, error: sErr }, { data: items, error: iErr }] = await Promise.all([
+                db.from('sections').select('*').order('created_at', { ascending: true }),
+                db.from('items').select('*').order('created_at', { ascending: true })
+            ]);
+
+            if (sErr || iErr) throw new Error(sErr?.message || iErr?.message);
+
+            if (sections && sections.length > 0) {
+                state.sections = sections;
+                state.items = items || [];
+                state.usingSupabase = true;
+                console.log('[Supabase] Loaded ✅', sections.length, 'sections,', items.length, 'items');
+                return;
+            }
+
+            // Supabase tables are empty — seed default data
+            console.log('[Supabase] Empty tables, seeding defaults...');
+            await seedSupabase();
+            const [{ data: s2 }, { data: i2 }] = await Promise.all([
+                db.from('sections').select('*').order('created_at', { ascending: true }),
+                db.from('items').select('*').order('created_at', { ascending: true })
+            ]);
+            state.sections = s2 || DEFAULT_SECTIONS;
+            state.items    = i2 || DEFAULT_ITEMS;
+            state.usingSupabase = true;
+
+        } catch (err) {
+            console.warn('[Supabase] Error, using localStorage fallback:', err.message);
+            loadLocalFallback();
         }
-
-        // MongoDB is empty — seed it then load again
-        console.log('[DB] MongoDB empty, seeding defaults...');
-        await API.post('/api/seed', {});
-        const [s2, i2] = await Promise.all([API.get('/api/sections'), API.get('/api/items')]);
-        state.sections = s2;
-        state.items = i2;
-        state.usingMongoDB = true;
-
-    } catch (err) {
-        // API not ready yet — fall back to localStorage
-        console.warn('[DB] MongoDB not available, using localStorage fallback:', err.message);
-        state.sections = JSON.parse(localStorage.getItem("us_sections")) || DEFAULT_SECTIONS;
-        state.items = JSON.parse(localStorage.getItem("us_items")) || DEFAULT_ITEMS;
-        state.usingMongoDB = false;
+    } else {
+        console.info('[Supabase] Not configured — using localStorage. Set SUPABASE_URL and SUPABASE_ANON_KEY in app.js to enable cloud storage.');
+        loadLocalFallback();
     }
 }
 
-// ── Save to localStorage as backup (always kept in sync) ───────────────────
+function loadLocalFallback() {
+    state.sections     = JSON.parse(localStorage.getItem("us_sections")) || DEFAULT_SECTIONS;
+    state.items        = JSON.parse(localStorage.getItem("us_items"))    || DEFAULT_ITEMS;
+    state.usingSupabase = false;
+}
+
+// ── Seed default data into Supabase ────────────────────────────────────────
+async function seedSupabase() {
+    if (!db) return;
+    const sectionsWithTs = DEFAULT_SECTIONS.map((s, i) => ({ ...s, created_at: new Date(Date.now() + i).toISOString() }));
+    const itemsWithTs    = DEFAULT_ITEMS.map((item, i) => ({ ...item, created_at: new Date(Date.now() + i).toISOString() }));
+    await db.from('sections').insert(sectionsWithTs);
+    await db.from('items').insert(itemsWithTs);
+}
+
+// ── Keep localStorage in sync as offline backup ────────────────────────────
 function saveStateToLocalStorage() {
     localStorage.setItem("us_sections", JSON.stringify(state.sections));
-    localStorage.setItem("us_items", JSON.stringify(state.items));
+    localStorage.setItem("us_items",    JSON.stringify(state.items));
 }
 
-
-// 4. Initialization
+// ── Initialization ─────────────────────────────────────────────────────────
 document.addEventListener("DOMContentLoaded", async () => {
-    // Setup Lucide icons initially
     lucide.createIcons();
 
-    // Set share link input default value to current origin/location
     const shareInput = document.getElementById("share-link-input");
-    if (shareInput) {
-        shareInput.value = window.location.href.split('?')[0];
-    }
+    if (shareInput) shareInput.value = window.location.href.split('?')[0];
 
-    // ── Load data from MongoDB (or localStorage fallback) ──
+    // Load from Supabase (or localStorage fallback)
     await loadState();
-    // Keep localStorage in sync as backup
     saveStateToLocalStorage();
 
-    // Initialize UI views based on URL parameter or defaults
-    const urlParams = new URLSearchParams(window.location.search);
-    const view = urlParams.get("view");
+    // Route to correct view
+    const urlParams  = new URLSearchParams(window.location.search);
+    const view       = urlParams.get("view");
     const isAdminPath = window.location.pathname === "/admin" || window.location.pathname === "/admin/";
     if (view === "admin" || isAdminPath) {
         requireAdminAuth();
@@ -121,13 +128,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         switchToCustomerView();
     }
 
-    // Bind event listeners
     bindEventListeners();
-
-    // Initial renders
     updateStats();
     renderAll();
 });
+
 
 // ============================================================
 // AUTH: Admin Login System
@@ -587,18 +592,18 @@ async function saveSection(e) {
 
     try {
         if (id) {
-            // Edit existing section
-            if (state.usingMongoDB) await API.put('/api/sections', { id, name, icon });
+            // Edit existing section in Supabase
+            if (state.usingSupabase) await db.from('sections').update({ name, icon }).eq('id', id);
             const section = state.sections.find(s => s.id === id);
             if (section) { section.name = name; section.icon = icon; }
         } else {
-            // Create new section
-            const newSection = { id: `sec-${Date.now()}`, name, icon };
-            if (state.usingMongoDB) await API.post('/api/sections', newSection);
+            // Create new section in Supabase
+            const newSection = { id: `sec-${Date.now()}`, name, icon, created_at: new Date().toISOString() };
+            if (state.usingSupabase) await db.from('sections').insert(newSection);
             state.sections.push(newSection);
         }
     } catch (err) {
-        console.warn('[DB] Section save failed, using local only:', err.message);
+        console.warn('[Supabase] Section save failed, using local only:', err.message);
     }
 
     saveStateToLocalStorage();
@@ -620,13 +625,13 @@ function editSection(id) {
 }
 
 function deleteSection(id) {
-    if (confirm("Are you sure you want to delete this category section? Dynamic items under it won't be deleted but their category binding will remain.")) {
+    if (confirm("Are you sure you want to delete this category section? Items under it won't be deleted but their category binding will remain.")) {
         state.sections = state.sections.filter(s => s.id !== id);
         saveStateToLocalStorage();
         updateStats();
         renderAll();
-        // Delete from MongoDB async (non-blocking)
-        if (state.usingMongoDB) API.delete(`/api/sections?id=${id}`).catch(e => console.warn('[DB] Delete section failed:', e.message));
+        // Delete from Supabase async (non-blocking)
+        if (state.usingSupabase) db.from('sections').delete().eq('id', id).catch(e => console.warn('[Supabase] Delete section failed:', e.message));
     }
 }
 
@@ -671,19 +676,19 @@ async function saveItem(e) {
 
     try {
         if (id) {
-            // Edit existing item
-            const payload = { id, name, category, price, unit, desc, image };
-            if (state.usingMongoDB) await API.put('/api/items', payload);
+            // Edit existing item in Supabase
+            const payload = { name, category, price, unit, desc, image };
+            if (state.usingSupabase) await db.from('items').update(payload).eq('id', id);
             const item = state.items.find(i => i.id === id);
             if (item) Object.assign(item, { name, category, price, unit, desc, image });
         } else {
-            // Create new item
-            const newItem = { id: `item-${Date.now()}`, name, category, price, unit, desc, image, available: true };
-            if (state.usingMongoDB) await API.post('/api/items', newItem);
+            // Create new item in Supabase
+            const newItem = { id: `item-${Date.now()}`, name, category, price, unit, desc, image, available: true, created_at: new Date().toISOString() };
+            if (state.usingSupabase) await db.from('items').insert(newItem);
             state.items.push(newItem);
         }
     } catch (err) {
-        console.warn('[DB] Item save failed, using local only:', err.message);
+        console.warn('[Supabase] Item save failed, using local only:', err.message);
     }
 
     saveStateToLocalStorage();
@@ -717,8 +722,8 @@ function deleteItem(id) {
         saveStateToLocalStorage();
         updateStats();
         renderAll();
-        // Delete from MongoDB async (non-blocking)
-        if (state.usingMongoDB) API.delete(`/api/items?id=${id}`).catch(e => console.warn('[DB] Delete item failed:', e.message));
+        // Delete from Supabase async (non-blocking)
+        if (state.usingSupabase) db.from('items').delete().eq('id', id).catch(e => console.warn('[Supabase] Delete item failed:', e.message));
     }
 }
 
@@ -730,8 +735,8 @@ function toggleItemAvailability(id, checked) {
         saveStateToLocalStorage();
         updateStats();
         renderAll();
-        // Persist availability to MongoDB async
-        if (state.usingMongoDB) API.put('/api/items', { id, available: checked }).catch(e => console.warn('[DB] Toggle availability failed:', e.message));
+        // Persist availability to Supabase async
+        if (state.usingSupabase) db.from('items').update({ available: checked }).eq('id', id).catch(e => console.warn('[Supabase] Toggle availability failed:', e.message));
     }
 }
 
