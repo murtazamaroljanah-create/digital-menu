@@ -1,1 +1,6 @@
-{"rewrites":[{"source":"/menu","destination":"/?view=menu"},{"source":"/admin","destination":"/?view=admin"}]}
+{
+  "rewrites": [
+    { "source": "/menu", "destination": "/?view=menu" },
+    { "source": "/admin", "destination": "/?view=admin" }
+  ]
+}

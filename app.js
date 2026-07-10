@@ -2,7 +2,7 @@
    Universal Sweets - Digital Menu & Admin JavaScript
    ========================================================================== */
 
-// 1. Initial Mock / Seed Data
+// 1. Default / Seed Data (used as fallback if API is unavailable)
 const DEFAULT_SECTIONS = [
     { id: "sec-1", name: "Sweets", icon: "cookie" },
     { id: "sec-2", name: "Snacks", icon: "sandwich" },
@@ -12,95 +12,91 @@ const DEFAULT_SECTIONS = [
 ];
 
 const DEFAULT_ITEMS = [
-    {
-        id: "item-1",
-        name: "Kaju Katli",
-        category: "Sweets",
-        price: 720,
-        unit: "kg",
-        desc: "Rich and soft cashew slices made with pure ghee and decorated with premium silver leaf.",
-        image: "assets/kaju_katli.png",
-        available: true
-    },
-    {
-        id: "item-2",
-        name: "Motichoor Ladoo",
-        category: "Sweets",
-        price: 560,
-        unit: "kg",
-        desc: "Classic soft laddoo made from fine boondi pearls, pure ghee, and a hint of cardamom.",
-        image: "assets/ladoo.png",
-        available: true
-    },
-    {
-        id: "item-3",
-        name: "Mathri",
-        category: "Snacks",
-        price: 280,
-        unit: "kg",
-        desc: "Crispy and savory traditional crackers spiced with carom seeds (ajwain), perfect for tea time.",
-        image: "assets/mathri.png",
-        available: true
-    },
-    {
-        id: "item-4",
-        name: "Masala Khasta",
-        category: "Snacks",
-        price: 300,
-        unit: "kg",
-        desc: "Flaky crust stuffed with spicy and savory lentil mixture, fried to golden perfection.",
-        image: "assets/mathri.png",
-        available: true
-    },
-    {
-        id: "item-5",
-        name: "Badam Milk",
-        category: "Beverages",
-        price: 120,
-        unit: "glass",
-        desc: "Rich, chilled almond milk infused with real saffron strands and garnished with sliced almonds.",
-        image: "assets/badam_milk.png",
-        available: true
-    },
-    {
-        id: "item-6",
-        name: "Rasgulla",
-        category: "Sweets",
-        price: 440,
-        unit: "kg",
-        desc: "Soft and spongy traditional cottage cheese balls cooked in delicate sugar syrup.",
-        image: "assets/rasgulla.png",
-        available: true
-    },
-    {
-        id: "item-7",
-        name: "Gulab Jamun",
-        category: "Sweets",
-        price: 440,
-        unit: "kg",
-        desc: "Warm golden-brown fried milk solids dumplings soaked in rose-flavored cardamom syrup.",
-        image: "assets/gulab_jamun.png",
-        available: true
-    }
+    { id: "item-1", name: "Kaju Katli", category: "Sweets", price: 720, unit: "kg", desc: "Rich and soft cashew slices made with pure ghee and decorated with premium silver leaf.", image: "assets/kaju_katli.png", available: true },
+    { id: "item-2", name: "Motichoor Ladoo", category: "Sweets", price: 560, unit: "kg", desc: "Classic soft laddoo made from fine boondi pearls, pure ghee, and a hint of cardamom.", image: "assets/ladoo.png", available: true },
+    { id: "item-3", name: "Mathri", category: "Snacks", price: 280, unit: "kg", desc: "Crispy and savory traditional crackers spiced with carom seeds (ajwain), perfect for tea time.", image: "assets/mathri.png", available: true },
+    { id: "item-4", name: "Masala Khasta", category: "Snacks", price: 300, unit: "kg", desc: "Flaky crust stuffed with spicy and savory lentil mixture, fried to golden perfection.", image: "assets/mathri.png", available: true },
+    { id: "item-5", name: "Badam Milk", category: "Beverages", price: 120, unit: "glass", desc: "Rich, chilled almond milk infused with real saffron strands and garnished with sliced almonds.", image: "assets/badam_milk.png", available: true },
+    { id: "item-6", name: "Rasgulla", category: "Sweets", price: 440, unit: "kg", desc: "Soft and spongy traditional cottage cheese balls cooked in delicate sugar syrup.", image: "assets/rasgulla.png", available: true },
+    { id: "item-7", name: "Gulab Jamun", category: "Sweets", price: 440, unit: "kg", desc: "Warm golden-brown fried milk solids dumplings soaked in rose-flavored cardamom syrup.", image: "assets/gulab_jamun.png", available: true }
 ];
 
-// 2. Global State management
+// 2. Global State
 let state = {
-    sections: JSON.parse(localStorage.getItem("us_sections")) || DEFAULT_SECTIONS,
-    items: JSON.parse(localStorage.getItem("us_items")) || DEFAULT_ITEMS,
-    cart: {}, // { itemId: quantity }
+    sections: [],
+    items: [],
+    cart: {},
     activeCustomerCategory: "All",
-    customerSearchQuery: ""
+    customerSearchQuery: "",
+    usingMongoDB: false  // true once API is confirmed working
 };
 
-// 3. Save State helper
+// ── API helpers ──────────────────────────────────────────────────────────────
+const API = {
+    async get(path) {
+        const r = await fetch(path);
+        if (!r.ok) throw new Error(`GET ${path} failed: ${r.status}`);
+        return r.json();
+    },
+    async post(path, body) {
+        const r = await fetch(path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+        if (!r.ok) throw new Error(`POST ${path} failed: ${r.status}`);
+        return r.json();
+    },
+    async put(path, body) {
+        const r = await fetch(path, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+        if (!r.ok) throw new Error(`PUT ${path} failed: ${r.status}`);
+        return r.json();
+    },
+    async delete(path) {
+        const r = await fetch(path, { method: 'DELETE' });
+        if (!r.ok) throw new Error(`DELETE ${path} failed: ${r.status}`);
+        return r.json();
+    }
+};
+
+// ── Load state from MongoDB (or fallback to localStorage) ───────────────────
+async function loadState() {
+    try {
+        const [sections, items] = await Promise.all([
+            API.get('/api/sections'),
+            API.get('/api/items')
+        ]);
+
+        if (sections && sections.length > 0) {
+            state.sections = sections;
+            state.items = items;
+            state.usingMongoDB = true;
+            console.log('[DB] Loaded from MongoDB ✅');
+            return;
+        }
+
+        // MongoDB is empty — seed it then load again
+        console.log('[DB] MongoDB empty, seeding defaults...');
+        await API.post('/api/seed', {});
+        const [s2, i2] = await Promise.all([API.get('/api/sections'), API.get('/api/items')]);
+        state.sections = s2;
+        state.items = i2;
+        state.usingMongoDB = true;
+
+    } catch (err) {
+        // API not ready yet — fall back to localStorage
+        console.warn('[DB] MongoDB not available, using localStorage fallback:', err.message);
+        state.sections = JSON.parse(localStorage.getItem("us_sections")) || DEFAULT_SECTIONS;
+        state.items = JSON.parse(localStorage.getItem("us_items")) || DEFAULT_ITEMS;
+        state.usingMongoDB = false;
+    }
+}
+
+// ── Save to localStorage as backup (always kept in sync) ───────────────────
 function saveStateToLocalStorage() {
     localStorage.setItem("us_sections", JSON.stringify(state.sections));
     localStorage.setItem("us_items", JSON.stringify(state.items));
 }
 
+
 // 4. Initialization
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     // Setup Lucide icons initially
     lucide.createIcons();
 
@@ -109,6 +105,11 @@ document.addEventListener("DOMContentLoaded", () => {
     if (shareInput) {
         shareInput.value = window.location.href.split('?')[0];
     }
+
+    // ── Load data from MongoDB (or localStorage fallback) ──
+    await loadState();
+    // Keep localStorage in sync as backup
+    saveStateToLocalStorage();
 
     // Initialize UI views based on URL parameter or defaults
     const urlParams = new URLSearchParams(window.location.search);
@@ -576,7 +577,7 @@ function closeSectionModal() {
     document.getElementById("modalSection").classList.remove("active");
 }
 
-function saveSection(e) {
+async function saveSection(e) {
     e.preventDefault();
     const id = document.getElementById("section-id-input").value;
     const name = document.getElementById("section-name").value.trim();
@@ -584,21 +585,20 @@ function saveSection(e) {
 
     if (!name) return;
 
-    if (id) {
-        // Edit existing section
-        const section = state.sections.find(s => s.id === id);
-        if (section) {
-            section.name = name;
-            section.icon = icon;
+    try {
+        if (id) {
+            // Edit existing section
+            if (state.usingMongoDB) await API.put('/api/sections', { id, name, icon });
+            const section = state.sections.find(s => s.id === id);
+            if (section) { section.name = name; section.icon = icon; }
+        } else {
+            // Create new section
+            const newSection = { id: `sec-${Date.now()}`, name, icon };
+            if (state.usingMongoDB) await API.post('/api/sections', newSection);
+            state.sections.push(newSection);
         }
-    } else {
-        // Create new section
-        const newSection = {
-            id: `sec-${Date.now()}`,
-            name,
-            icon
-        };
-        state.sections.push(newSection);
+    } catch (err) {
+        console.warn('[DB] Section save failed, using local only:', err.message);
     }
 
     saveStateToLocalStorage();
@@ -625,6 +625,8 @@ function deleteSection(id) {
         saveStateToLocalStorage();
         updateStats();
         renderAll();
+        // Delete from MongoDB async (non-blocking)
+        if (state.usingMongoDB) API.delete(`/api/sections?id=${id}`).catch(e => console.warn('[DB] Delete section failed:', e.message));
     }
 }
 
@@ -655,7 +657,7 @@ function closeItemModal() {
     document.getElementById("modalItem").classList.remove("active");
 }
 
-function saveItem(e) {
+async function saveItem(e) {
     e.preventDefault();
     const id = document.getElementById("item-id-input").value;
     const name = document.getElementById("item-name").value.trim();
@@ -667,30 +669,21 @@ function saveItem(e) {
 
     if (!name || !price || !unit) return;
 
-    if (id) {
-        // Edit existing item
-        const item = state.items.find(i => i.id === id);
-        if (item) {
-            item.name = name;
-            item.category = category;
-            item.price = price;
-            item.unit = unit;
-            item.desc = desc;
-            item.image = image;
+    try {
+        if (id) {
+            // Edit existing item
+            const payload = { id, name, category, price, unit, desc, image };
+            if (state.usingMongoDB) await API.put('/api/items', payload);
+            const item = state.items.find(i => i.id === id);
+            if (item) Object.assign(item, { name, category, price, unit, desc, image });
+        } else {
+            // Create new item
+            const newItem = { id: `item-${Date.now()}`, name, category, price, unit, desc, image, available: true };
+            if (state.usingMongoDB) await API.post('/api/items', newItem);
+            state.items.push(newItem);
         }
-    } else {
-        // Create new item
-        const newItem = {
-            id: `item-${Date.now()}`,
-            name,
-            category,
-            price,
-            unit,
-            desc,
-            image,
-            available: true
-        };
-        state.items.push(newItem);
+    } catch (err) {
+        console.warn('[DB] Item save failed, using local only:', err.message);
     }
 
     saveStateToLocalStorage();
@@ -720,11 +713,12 @@ function editItem(id) {
 function deleteItem(id) {
     if (confirm("Are you sure you want to delete this menu item?")) {
         state.items = state.items.filter(i => i.id !== id);
-        // Clear from cart as well if present
         delete state.cart[id];
         saveStateToLocalStorage();
         updateStats();
         renderAll();
+        // Delete from MongoDB async (non-blocking)
+        if (state.usingMongoDB) API.delete(`/api/items?id=${id}`).catch(e => console.warn('[DB] Delete item failed:', e.message));
     }
 }
 
@@ -732,13 +726,12 @@ function toggleItemAvailability(id, checked) {
     const item = state.items.find(i => i.id === id);
     if (item) {
         item.available = checked;
-        // Remove from cart if item goes out of stock
-        if (!checked) {
-            delete state.cart[id];
-        }
+        if (!checked) delete state.cart[id];
         saveStateToLocalStorage();
         updateStats();
         renderAll();
+        // Persist availability to MongoDB async
+        if (state.usingMongoDB) API.put('/api/items', { id, available: checked }).catch(e => console.warn('[DB] Toggle availability failed:', e.message));
     }
 }
 
