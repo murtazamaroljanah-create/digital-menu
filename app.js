@@ -5,8 +5,8 @@
 // ── Supabase Configuration ─────────────────────────────────────────────────
 // Replace these with your actual Supabase project URL and anon key
 // Get them from: https://supabase.com → Your Project → Settings → API
-const SUPABASE_URL  = "YOUR_SUPABASE_URL";       // e.g. https://xxxx.supabase.co
-const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY"; // long string starting with eyJ...
+const SUPABASE_URL  = "https://lijzpumlvbjgjbfmhdif.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_Lcb6Q6i7d42yIdka93j5xQ_4cIoDbq8";
 
 // Create Supabase client (supabase global is loaded from CDN in index.html)
 let db = null;
