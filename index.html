@@ -528,7 +528,7 @@
         </div>
     </div>
 
-    <!-- Add/Edit Item Modal -->
+    <!-- Add/Edit Item Modal (Variant-Aware + Image Upload) -->
     <div class="modal-overlay" id="modalItem">
         <div class="modal-box modal-box-lg">
             <div class="modal-header">
@@ -537,42 +537,93 @@
             </div>
             <form id="formItem" class="modal-form">
                 <input type="hidden" id="item-id-input">
+
+                <!-- Basic Info -->
                 <div class="form-grid">
                     <div class="form-group">
-                        <label for="item-name">Item Name</label>
+                        <label for="item-name">Item Name *</label>
                         <input type="text" id="item-name" required placeholder="e.g. Kaju Katli">
                     </div>
                     <div class="form-group">
-                        <label for="item-category">Category (Section)</label>
-                        <select id="item-category" required>
-                            <!-- Populated dynamically -->
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="item-price">Price</label>
-                        <input type="number" id="item-price" required min="1" placeholder="e.g. 720">
-                    </div>
-                    <div class="form-group">
-                        <label for="item-unit">Price Unit</label>
-                        <input type="text" id="item-unit" required placeholder="e.g. kg, plate, glass, piece">
+                        <label for="item-category">Category *</label>
+                        <select id="item-category" required><!-- populated by JS --></select>
                     </div>
                     <div class="form-group full-width">
                         <label for="item-desc">Description</label>
-                        <textarea id="item-desc" rows="3" placeholder="Brief description of ingredients or taste..."></textarea>
-                    </div>
-                    <div class="form-group full-width">
-                        <label for="item-image">Item Image</label>
-                        <select id="item-image">
-                            <option value="assets/kaju_katli.png">Kaju Katli (Cashew Sweet)</option>
-                            <option value="assets/ladoo.png">Motichoor Ladoo (Orange Ladoo)</option>
-                            <option value="assets/rasgulla.png">Rasgulla (White Syrup Balls)</option>
-                            <option value="assets/gulab_jamun.png">Gulab Jamun (Brown Syrup Balls)</option>
-                            <option value="assets/mathri.png">Mathri (Savory Crackers)</option>
-                            <option value="assets/badam_milk.png">Badam Milk (Almond Drink)</option>
-                            <option value="assets/hero_sweets.png">Sweets Platter (Default)</option>
-                        </select>
+                        <textarea id="item-desc" rows="2" placeholder="Brief description of ingredients or taste..."></textarea>
                     </div>
                 </div>
+
+                <!-- Pricing toggle -->
+                <div class="form-section-divider"><span>Pricing</span></div>
+                <div class="form-group">
+                    <label class="toggle-row has-variants-toggle">
+                        <div>
+                            <span style="font-size:14px;font-weight:600;color:var(--primary-dark)">Enable Variants</span>
+                            <p style="font-size:12px;color:var(--text-muted);margin:2px 0 0">Turn ON if this product has multiple price options (e.g. Regular, Pure Ghee)</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="item-has-variants">
+                            <span class="slider"></span>
+                        </label>
+                    </label>
+                </div>
+
+                <!-- Standard price/unit (hidden when variants ON) -->
+                <div id="price-unit-fields" class="form-grid">
+                    <div class="form-group">
+                        <label for="item-price">Price (₹) *</label>
+                        <input type="number" id="item-price" min="1" placeholder="e.g. 720">
+                    </div>
+                    <div class="form-group">
+                        <label for="item-unit">Price Unit *</label>
+                        <input type="text" id="item-unit" placeholder="e.g. kg, plate, glass, piece">
+                    </div>
+                </div>
+
+                <!-- Variant builder (shown when variants ON) -->
+                <div id="variant-builder" style="display:none">
+                    <div class="variant-builder-header">
+                        <span class="variant-builder-title"><i data-lucide="layers"></i> Variants</span>
+                        <button type="button" class="btn btn-secondary btn-sm" id="btnAddPendingVariant">
+                            <i data-lucide="plus"></i> Add Variant
+                        </button>
+                    </div>
+                    <div class="variant-builder-cols">
+                        <span>Name</span><span>Price (₹)</span><span>Unit</span><span>Default</span><span></span>
+                    </div>
+                    <div id="pending-variants-list"></div>
+                </div>
+
+                <!-- Image Upload -->
+                <div class="form-section-divider"><span>Product Image</span></div>
+                <div class="form-group full-width">
+                    <div class="image-upload-zone" id="imageUploadZone">
+                        <div class="image-preview-wrapper" id="imagePreviewWrapper" style="display:none">
+                            <img id="imagePreviewEl" src="" alt="Preview">
+                            <button type="button" class="image-remove-btn" id="btnRemoveImage" title="Remove image">
+                                <i data-lucide="x"></i>
+                            </button>
+                        </div>
+                        <div class="image-upload-placeholder" id="imageUploadPlaceholder">
+                            <i data-lucide="image-plus"></i>
+                            <span>Drag & drop or click to upload</span>
+                            <small>JPG, PNG, WEBP — max 5 MB</small>
+                        </div>
+                        <input type="file" id="imageFileInput" accept="image/jpeg,image/png,image/webp" style="display:none">
+                    </div>
+                    <p style="font-size:11px;color:var(--text-muted);margin-top:8px;">Or choose a preset image:</p>
+                    <select id="item-image" style="margin-top:4px;width:100%">
+                        <option value="assets/kaju_katli.png">Kaju Katli (Cashew Sweet)</option>
+                        <option value="assets/ladoo.png">Motichoor Ladoo (Orange Ladoo)</option>
+                        <option value="assets/rasgulla.png">Rasgulla (White Syrup Balls)</option>
+                        <option value="assets/gulab_jamun.png">Gulab Jamun (Brown Syrup Balls)</option>
+                        <option value="assets/mathri.png">Mathri (Savory Crackers)</option>
+                        <option value="assets/badam_milk.png">Badam Milk (Almond Drink)</option>
+                        <option value="assets/hero_sweets.png">Sweets Platter (Default)</option>
+                    </select>
+                </div>
+
                 <div class="modal-footer">
                     <button type="button" class="btn btn-text" id="btnCancelItemModal">Cancel</button>
                     <button type="submit" class="btn btn-primary">Save Item</button>
@@ -617,9 +668,83 @@
         </div>
     </div>
 
+    <!-- ══ Customer Variant Selection Modal ══ -->
+    <div class="modal-overlay" id="modalVariantSelect">
+        <div class="modal-box modal-box-lg">
+            <div class="modal-header">
+                <h3 id="variantModalTitle">Choose Variant</h3>
+                <button class="modal-close" id="btnCloseVariantModal"><i data-lucide="x"></i></button>
+            </div>
+            <div class="variant-modal-body">
+                <div class="variant-modal-product">
+                    <img id="variantModalImg" src="assets/hero_sweets.png" alt="">
+                    <p id="variantModalDesc" class="variant-modal-desc"></p>
+                </div>
+                <div class="variant-options-section">
+                    <h4 class="variant-choose-title">Choose Quality</h4>
+                    <div id="variantOptionsList" class="variant-options-list"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-text" id="btnCancelVariantModal">Cancel</button>
+                <button class="btn btn-primary" id="btnAddSelectedVariant" disabled>
+                    <i data-lucide="shopping-cart"></i> Select a variant
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══ Admin Variant Edit Modal ══ -->
+    <div class="modal-overlay" id="modalVariantEdit">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 id="variantEditTitle">Add Variant</h3>
+                <button class="modal-close" id="btnCloseVariantEdit"><i data-lucide="x"></i></button>
+            </div>
+            <form id="formVariant" class="modal-form">
+                <input type="hidden" id="variant-id-input">
+                <input type="hidden" id="variant-item-id-input">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="variant-name">Variant Name *</label>
+                        <input type="text" id="variant-name" required placeholder="e.g. Regular, Pure Ghee, Small">
+                    </div>
+                    <div class="form-group">
+                        <label for="variant-price">Price (₹) *</label>
+                        <input type="number" id="variant-price" required min="1" placeholder="e.g. 560">
+                    </div>
+                    <div class="form-group">
+                        <label for="variant-unit">Unit *</label>
+                        <input type="text" id="variant-unit" required placeholder="e.g. kg, glass, piece, 250g">
+                    </div>
+                    <div class="form-group">
+                        <label for="variant-order">Display Order</label>
+                        <input type="number" id="variant-order" min="0" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="toggle-row">
+                            <span class="toggle-lbl">Set as Default</span>
+                            <label class="switch"><input type="checkbox" id="variant-is-default"><span class="slider"></span></label>
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="toggle-row">
+                            <span class="toggle-lbl">Available in Stock</span>
+                            <label class="switch"><input type="checkbox" id="variant-is-available" checked><span class="slider"></span></label>
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-text" id="btnCancelVariantEdit">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Variant</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Supabase Client (CDN) -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- App Script -->
-    <script src="app.js?v=5"></script>
+    <script src="app.js?v=6"></script>
 </body>
 </html>
