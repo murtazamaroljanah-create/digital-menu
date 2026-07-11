@@ -122,6 +122,9 @@ let state = {
 async function loadState() {
     db = initSupabase();
 
+    // Show loading skeletons while fetching
+    showLoadingSkeleton();
+
     if (db) {
         try {
             const [{ data: sections, error: sErr }, { data: items, error: iErr }] = await Promise.all([
@@ -159,6 +162,21 @@ async function loadState() {
         console.info('[Supabase] Not configured — using localStorage fallback.');
         loadLocalFallback();
     }
+}
+
+function showLoadingSkeleton() {
+    const tbody = document.getElementById("admin-items-table-body");
+    const secList = document.getElementById("admin-sections-list");
+    const skelRow = () => `
+        <div class="skeleton-row">
+            <div class="skeleton skeleton-img"></div>
+            <div class="skeleton-text">
+                <div class="skeleton skeleton-line" style="width:60%"></div>
+                <div class="skeleton skeleton-line" style="width:40%"></div>
+            </div>
+        </div>`;
+    if (tbody) tbody.innerHTML = `<tr><td colspan="6" style="padding:8px 0">${[1,2,3].map(skelRow).join('')}</td></tr>`;
+    if (secList) secList.innerHTML = [1,2,3].map(() => `<li style="padding:8px 0">${skelRow()}</li>`).join('');
 }
 
 // Normalise item fields — support both old `available` and new `is_available` columns
@@ -305,27 +323,135 @@ function switchToCustomerView() {
 // EVENT BINDING
 // ══════════════════════════════════════════════════════════════════════════════
 function bindEventListeners() {
+    // ── View Switcher ────────────────────────────────────────
     document.getElementById("switchToAdmin")?.addEventListener("click", () => {
         if (isAdminAuthenticated()) { switchToAdminView(); } else { requireAdminAuth(); }
     });
     document.getElementById("switchToCustomer")?.addEventListener("click", switchToCustomerView);
 
-    document.getElementById("formSection")?.addEventListener("submit",  saveSection);
-    document.getElementById("formItem")?.addEventListener("submit",     saveItem);
-    document.getElementById("formLogin")?.addEventListener("submit",    handleAdminLogin);
-    document.getElementById("admin-logout-btn")?.addEventListener("click", handleAdminLogout);
+    // ── Admin Login & Auth ───────────────────────────────────
+    document.getElementById("formLogin")?.addEventListener("submit", handleAdminLogin);
+    document.getElementById("loginBackToMenu")?.addEventListener("click", (e) => {
+        e.preventDefault(); hideLoginOverlay(); switchToCustomerView();
+    });
+    document.getElementById("toggleLoginPassword")?.addEventListener("click", () => {
+        const pw = document.getElementById("admin-password");
+        if (!pw) return;
+        pw.type = pw.type === "password" ? "text" : "password";
+        const icon = document.querySelector("#toggleLoginPassword i[data-lucide]");
+        if (icon) { icon.setAttribute("data-lucide", pw.type === "text" ? "eye-off" : "eye"); lucide.createIcons(); }
+    });
+    document.getElementById("admin-logout-btn")?.addEventListener("click", (e) => {
+        e.preventDefault(); handleAdminLogout();
+    });
 
-    // Customer search
-    document.getElementById("customer-search-input")?.addEventListener("input", (e) => {
+    // ── Sidebar Navigation ───────────────────────────────────
+    document.querySelectorAll(".sidebar-menu li[data-tab]").forEach(li => {
+        li.addEventListener("click", (e) => {
+            e.preventDefault();
+            document.querySelectorAll(".sidebar-menu li").forEach(el => el.classList.remove("active"));
+            li.classList.add("active");
+            const labels = {
+                "dashboard":     ["Dashboard",      "Manage your digital menu easily"],
+                "menu-sections": ["Menu Sections",  "Organise your menu categories"],
+                "items":         ["Menu Items",     "Add, edit and manage products"],
+                "categories":    ["Categories",     "Manage item categories"],
+                "banners":       ["Banners",        "Manage promotional banners"],
+                "info-blocks":   ["Info Blocks",    "Manage store info and details"],
+                "settings":      ["Settings",       "Configure your menu settings"],
+            };
+            const tab = li.dataset.tab;
+            const h1 = document.querySelector(".main-header h1");
+            const sub = document.querySelector(".main-header p");
+            if (h1 && labels[tab]) h1.innerText = labels[tab][0];
+            if (sub && labels[tab]) sub.innerText = labels[tab][1];
+        });
+    });
+    document.getElementById("sidebar-preview-menu")?.addEventListener("click", (e) => {
+        e.preventDefault(); switchToCustomerView();
+    });
+
+    // ── Section CRUD ─────────────────────────────────────────
+    document.getElementById("btnAddSection")?.addEventListener("click", openAddSectionModal);
+    document.getElementById("btnCloseSectionModal")?.addEventListener("click", closeSectionModal);
+    document.getElementById("btnCancelSectionModal")?.addEventListener("click", closeSectionModal);
+    document.getElementById("formSection")?.addEventListener("submit", saveSection);
+
+    // ── Item CRUD ────────────────────────────────────────────
+    document.getElementById("btnAddItem")?.addEventListener("click", openAddItemModal);
+    document.getElementById("btnCloseItemModal")?.addEventListener("click", closeItemModal);
+    document.getElementById("btnCancelItemModal")?.addEventListener("click", closeItemModal);
+    document.getElementById("formItem")?.addEventListener("submit", saveItem);
+
+    // ── Share & Preview ──────────────────────────────────────
+    document.getElementById("btnCopyLink")?.addEventListener("click", copyShareLink);
+    document.getElementById("btnPreviewMenuFull")?.addEventListener("click", switchToCustomerView);
+
+    const menuUrl = encodeURIComponent(window.location.origin + "/menu");
+    document.getElementById("share-wa")?.addEventListener("click", (e) => {
+        e.preventDefault();
+        window.open(`https://wa.me/?text=Check%20out%20Universal%20Sweets!%20${menuUrl}`, "_blank");
+    });
+    document.getElementById("share-fb")?.addEventListener("click", (e) => {
+        e.preventDefault();
+        window.open(`https://www.facebook.com/sharer/sharer.php?u=${menuUrl}`, "_blank");
+    });
+    document.getElementById("share-ig")?.addEventListener("click", (e) => {
+        e.preventDefault();
+        showToast("Copy the link and share it on Instagram Stories!", "info");
+    });
+    document.getElementById("share-other")?.addEventListener("click", (e) => {
+        e.preventDefault();
+        if (navigator.share) {
+            navigator.share({ title: "Universal Sweets Menu", url: window.location.origin + "/menu" });
+        } else {
+            copyShareLink();
+            showToast("Link copied! Share it anywhere.", "success");
+        }
+    });
+
+    // ── Customer Hero Buttons ────────────────────────────────
+    document.getElementById("btnExploreMenuHero")?.addEventListener("click", () => {
+        document.getElementById("customer-catalog-section")?.scrollIntoView({ behavior: "smooth" });
+    });
+    document.getElementById("btnWhatsAppHero")?.addEventListener("click", () => {
+        window.open("https://wa.me/919224701020", "_blank");
+    });
+    document.getElementById("navWhatsAppBtn")?.addEventListener("click", () => {
+        window.open("https://wa.me/919224701020", "_blank");
+    });
+
+    // ── Footer Links ─────────────────────────────────────────
+    document.getElementById("footerLinkAdmin")?.addEventListener("click", (e) => {
+        e.preventDefault(); requireAdminAuth();
+    });
+    document.getElementById("footerLinkExplore")?.addEventListener("click", (e) => {
+        e.preventDefault();
+        document.getElementById("customer-catalog-section")?.scrollIntoView({ behavior: "smooth" });
+    });
+
+    // ── Customer Search ──────────────────────────────────────
+    const searchInput = document.getElementById("customer-search-input");
+    const clearBtn    = document.getElementById("clear-search-btn");
+    searchInput?.addEventListener("input", (e) => {
         state.customerSearchQuery = e.target.value;
+        if (clearBtn) clearBtn.classList.toggle("hidden", !e.target.value);
+        renderCustomerItems();
+        lucide.createIcons();
+    });
+    clearBtn?.addEventListener("click", () => {
+        state.customerSearchQuery = "";
+        if (searchInput) searchInput.value = "";
+        clearBtn.classList.add("hidden");
         renderCustomerItems();
         lucide.createIcons();
     });
 
-    // Checkout / cart
+    // ── Cart / Checkout ──────────────────────────────────────
     document.getElementById("customer-view-cart-btn")?.addEventListener("click", showCheckoutModal);
     document.getElementById("btn-checkout-send-wa")?.addEventListener("click", sendWhatsAppOrder);
-    document.getElementById("btn-close-checkout")?.addEventListener("click",  closeCheckoutModal);
+    document.getElementById("btn-close-checkout")?.addEventListener("click", closeCheckoutModal);
+    document.getElementById("btnCloseCheckoutModal")?.addEventListener("click", closeCheckoutModal);
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -487,6 +613,8 @@ async function adminToggle(id, field, checkboxEl) {
 
         // Re-render badges in this row without full re-render
         updateAdminRowBadges(item);
+        // Refresh stats (updates Last Updated timestamp)
+        updateStats();
 
     } catch (err) {
         // 5. ROLLBACK on failure
@@ -766,15 +894,24 @@ function editSection(id) {
 
 async function deleteSection(id) {
     if (!confirm("Delete this section? Items won't be deleted but their category link remains.")) return;
+
+    // Optimistic remove
+    const removed = state.sections.find(s => s.id === id);
     state.sections = state.sections.filter(s => s.id !== id);
     saveStateToLocalStorage();
     updateStats();
     renderAll();
+
     try {
         await ProductService.deleteSection(id);
-        showToast('Section deleted.', 'success');
+        showToast(`Section "${removed?.name || ''}" deleted.`, 'success');
     } catch (err) {
-        showToast('Failed to delete section from database.', 'error');
+        // ROLLBACK — put it back
+        if (removed) state.sections.push(removed);
+        saveStateToLocalStorage();
+        updateStats();
+        renderAll();
+        showToast('Failed to delete section. Please try again.', 'error');
         console.error('[Supabase] Delete section failed:', err.message);
     }
 }
@@ -860,17 +997,27 @@ function editItem(id) {
 
 async function deleteItem(id) {
     if (!confirm("Delete this menu item?")) return;
-    const item = state.items.find(i => i.id === id);
+
+    // Optimistic remove
+    const removedItem    = state.items.find(i => i.id === id);
+    const removedCartQty = state.cart[id];
     state.items = state.items.filter(i => i.id !== id);
     delete state.cart[id];
     saveStateToLocalStorage();
     updateStats();
     renderAll();
+
     try {
         await ProductService.deleteItem(id);
-        showToast(`"${item?.name || 'Item'}" deleted.`, 'success');
+        showToast(`"${removedItem?.name || 'Item'}" deleted.`, 'success');
     } catch (err) {
-        showToast('Failed to delete item from database.', 'error');
+        // ROLLBACK — put it back
+        if (removedItem)    state.items.push(removedItem);
+        if (removedCartQty) state.cart[id] = removedCartQty;
+        saveStateToLocalStorage();
+        updateStats();
+        renderAll();
+        showToast('Failed to delete item. Please try again.', 'error');
         console.error('[Supabase] Delete item failed:', err.message);
     }
 }
@@ -890,7 +1037,25 @@ function updateStats() {
     const lastUpdatedEl = document.getElementById("stat-last-updated");
     if (totalItemsEl)  totalItemsEl.innerText  = state.items.length;
     if (totalCatsEl)   totalCatsEl.innerText   = state.sections.length;
-    if (lastUpdatedEl) lastUpdatedEl.innerText = "Just now";
+    if (lastUpdatedEl) {
+        const timestamps = state.items
+            .filter(i => i.updated_at)
+            .map(i => new Date(i.updated_at).getTime());
+        lastUpdatedEl.innerText = timestamps.length > 0
+            ? formatRelativeTime(new Date(Math.max(...timestamps)))
+            : "Just now";
+    }
+}
+
+function formatRelativeTime(date) {
+    const diffMs  = Date.now() - date.getTime();
+    const diffMin = Math.floor(diffMs / 60000);
+    const diffHr  = Math.floor(diffMin / 60);
+    const diffDay = Math.floor(diffHr / 24);
+    if (diffMin < 1)  return "Just now";
+    if (diffMin < 60) return `${diffMin}m ago`;
+    if (diffHr  < 24) return `${diffHr}h ago`;
+    return `${diffDay}d ago`;
 }
 
 function copyShareLink() {
